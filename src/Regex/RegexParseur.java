@@ -32,19 +32,19 @@ public class RegexParseur {
 	 * Parenthèse ouvrant '(' 
 	 * Délimiteur de début de groupe dans les expressions régulières
 	 */
-	static final int PARENTHESEOUVRANT = 0x16641664;
+	public static final int PARENTHESEOUVRANT = 0x16641664;
 
 	/**
 	 * Parenthèse fermante ')'
 	 * Délimiteur de fin de groupe dans les expressions régulières  
 	 */
-	static final int PARENTHESEFERMANT = 0x51515151;
+	public static final int PARENTHESEFERMANT = 0x51515151;
 
 	/**
 	 * Caractère universel (any character)
 	 * Représente le point '.' qui correspond à n'importe quel caractère
 	 */
-	static final int DOT = 0xD07;
+	public static final int DOT = 0xD07;
 	
 	
     
@@ -72,7 +72,7 @@ public class RegexParseur {
     
     
 	
-   public static RegexParseur parseur(String regex) throws Exception {
+   public static RegexArbre parseur(String regex) throws Exception {
 	   ArrayList<RegexArbre> result = new ArrayList<>();  
 	   
 	   for (int i = 0; i < regex.length(); i++) {
@@ -80,7 +80,7 @@ public class RegexParseur {
 	 
 	   }
 	   try {
-		   parseur(result);
+		   return parseur(result);
 	   } catch (Exception e) {
 		   e.printStackTrace();
 	   }
@@ -124,7 +124,7 @@ public class RegexParseur {
 		
 	    
 	    
-	    return null;
+	    return tokens.get(0);
 	    
 		
    	}

@@ -22,6 +22,27 @@ public class RegexArbre {
 	  this.sousArbre=sousArbre;
   }
   
+  public ArrayList<RegexArbre> getSousArbre() {
+	  return this.sousArbre;
+  }
+  
+  public RegexArbre getFilsDroite() {
+	  if(sousArbre.size()<=1) {
+		  return null;
+	  }
+	  return this.sousArbre.get(1);
+  }
+  
+  public RegexArbre getFilsGauche() {
+	  if(sousArbre.isEmpty()) {
+		  return null;
+	  }
+	  return this.sousArbre.get(0);
+  }
+  public int getRoot() {
+	  return this.root;
+  }
+  
   
   
   private String rootToString() {
