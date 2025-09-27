@@ -1,8 +1,6 @@
 package Regex;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 
 public class RegexParseur {
 
@@ -58,8 +56,21 @@ public class RegexParseur {
         if (c==')') return PARENTHESEFERMANT;
         return (int)c;
       }
-      
-	
+    
+    
+    
+    public static boolean estOperateur(RegexArbre arbre) {
+     return arbre.root == CONCAT || 
+        	arbre.root == ETOILE || 
+        	arbre.root == ALTERN || 
+        	arbre.root == PROTECTION ||
+        	arbre.root == PARENTHESEOUVRANT || 
+        	arbre.root == PARENTHESEFERMANT || 
+        	arbre.root == DOT;
+    }
+    
+    
+    
 	
    public static RegexParseur parseur(String regex) throws Exception {
 	   ArrayList<RegexArbre> result = new ArrayList<>();  
@@ -98,12 +109,12 @@ public class RegexParseur {
 	    
 	 // ÉTAPE 3 : Concaténation 
 	    while (contientConcat(tokens)) {
-	        tokens = traiterParentheses(tokens);
+	        tokens = traiterConcat(tokens);
 	    }
 	    
 	 // ÉTAPE 4 : Alternative  
 	    while (contientAltern(tokens)) {
-	        tokens = traiterParentheses(tokens);
+	        tokens = traiterAltern(tokens);
 	    }
 	    
 	 // Vérifier qu'il ne reste qu'un seul élément
@@ -119,13 +130,8 @@ public class RegexParseur {
    	}
 
 
-
-
-	
-
-
-
-	private static boolean contientParentheses(ArrayList<RegexArbre> tokens) {
+     
+    private static boolean contientParentheses(ArrayList<RegexArbre> tokens) {
 	
     for (RegexArbre t: tokens) if (t.root==PARENTHESEFERMANT || t.root==PARENTHESEOUVRANT) return true;
     	    return false;  
@@ -137,24 +143,29 @@ public class RegexParseur {
    	    return false;  
     }
 	
-	private static boolean contientConcat(ArrayList<RegexArbre> tokens) {
-		
-   	 for (RegexArbre t: tokens) if (t.root==CONCAT ) return true;
-   	    return false;  
-    }
 	
+	
+	private static boolean contientConcat(ArrayList<RegexArbre> tokens) {
+	    for (int i = 0; i < tokens.size() - 1; i++) {
+	        RegexArbre current = tokens.get(i);
+	        RegexArbre next = tokens.get(i + 1);
+	        
+	        if (current.root != ALTERN && next.root != ALTERN) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
 	
 	private static boolean contientAltern(ArrayList<RegexArbre> tokens) {
 		
-   	 for (RegexArbre t: tokens) if (t.root==ALTERN ) return true;
+   	 for (RegexArbre t: tokens) if (t.root==ALTERN && t.sousArbre.isEmpty() ) return true;
    	    return false;  
     } 
 	
-    
-   	
-
 	
-	 private static ArrayList<RegexArbre> traiterParentheses(ArrayList<RegexArbre> tokens) throws Exception {
+    
+   private static ArrayList<RegexArbre> traiterParentheses(ArrayList<RegexArbre> tokens) throws Exception {
 	     
 		 /* Lorsque on traite les parentheses , la première étape est de trouver la parenthese fermante */
 		 
@@ -168,6 +179,7 @@ public class RegexParseur {
 			}
 		 
 		 verifierParenthesesEquilibrees(tokens);
+		 
 		 return tokens;
 
      
@@ -305,9 +317,123 @@ public class RegexParseur {
 	    return tokens;
 	}
      
+	
+
+
+	private static ArrayList<RegexArbre> traiterConcat(ArrayList<RegexArbre> tokens) throws Exception {
+	    for (int i = 0; i < tokens.size() - 1; i++) {
+	        RegexArbre current = tokens.get(i);
+	        RegexArbre next = tokens.get(i + 1);
+	        
+	        // Deux éléments consécutifs sans | entre eux ?
+	        if (current.root != ALTERN && next.root != ALTERN) {
+	            return traiterConcatAPosition(tokens, i, i + 1);
+	        }
+	    }
+	    return tokens;
+	}
+	
+	
+	
+	
+	private static ArrayList<RegexArbre> traiterConcatAPosition(ArrayList<RegexArbre> tokens, int posGauche, int posDroite) throws Exception {
+	    // Vérifier que les positions sont valides
+	    if (posGauche >= posDroite || posDroite >= tokens.size()) {
+	        throw new Exception("Positions de concaténation invalides");
+	    }
+	    
+	    // Récupérer les deux éléments à concaténer
+	    RegexArbre gauche = tokens.get(posGauche);
+	    RegexArbre droite = tokens.get(posDroite);
+	    
+	    // Créer le nœud CONCAT
+	    ArrayList<RegexArbre> enfants = new ArrayList<>();
+	    enfants.add(gauche);
+	    enfants.add(droite);
+	    RegexArbre concatNode = new RegexArbre(CONCAT, enfants);
+	    
+	    // Remplacer les deux éléments par le nœud CONCAT
+	    tokens.remove(posDroite); // Supprimer d'abord l'élément de droite
+	    tokens.remove(posGauche); // Puis l'élément de gauche
+	    
+	    tokens.add(posGauche, concatNode); // Ajouter CONCAT à la position gauche
+	    
+	    return tokens;
+	}
+	
+	
+	
+	private static ArrayList<RegexArbre> traiterAltern(ArrayList<RegexArbre> tokens) throws Exception {
+	
+		
+		 for (int i = 0; i < tokens.size(); i++) {
+ 	        if (tokens.get(i).root == ALTERN && tokens.get(i).sousArbre.isEmpty()) {
+ 	            return traiterAlternAPosition(tokens, i);
+ 	        }
+ 	    }
+		 
+ 	    return tokens; // Aucune étoile trouvée
+	
+	}
 
 
 
+	private static ArrayList<RegexArbre> traiterAlternAPosition(ArrayList<RegexArbre> tokens, int i) throws Exception {
+		
+		// Vérifier que | n'est pas en première ou dernière position
+	    
+		if (i == 0) {
+	        throw new Exception("Opérateur '|' en position initiale non autorisé");
+	    }
+	    if (i == tokens.size() - 1) {
+	        throw new Exception("Opérateur '|' en position finale non autorisé");
+	    }
+		
+	 // Vérifier qu'il y a bien un élément avant et après
+	    RegexArbre gauche = tokens.get(i - 1);
+	    RegexArbre droite = tokens.get(i + 1);
+	    
+	    // Vérifier que les éléments autour ne sont pas des opérateurs problématiques
+	    if (gauche.root == ALTERN || droite.root == ALTERN) {
+	        throw new Exception("Double opérateur '|' non autorisé");
+	    }
+	    
+	    // | ne peut pas être adjacent à d'autres opérateurs sauf protection
+	    if (( estOperateur(gauche) && gauche.root != PROTECTION) || 
+	        (estOperateur(droite) && droite.root != PROTECTION) ) {
+	        throw new Exception("Opérateur '|' mal placé");
+	    }
+	    
+	    
+	    // Créer le nœud ALTERN avec gauche et droite
+	    ArrayList<RegexArbre> enfants = new ArrayList<>();
+	    enfants.add(gauche);
+	    enfants.add(droite);
+	    RegexArbre alternNode = new RegexArbre(ALTERN, enfants);
+	    
+	    // Supprimer les trois éléments : gauche, |, droite
+	    tokens.remove(i + 1); // Supprimer l'élément de droite en premier
+	    tokens.remove(i);     // Supprimer le |
+	    tokens.remove(i - 1); // Supprimer l'élément de gauche
+	    
+	    // Ajouter le nouveau nœud ALTERN à la position de l'ancien gauche
+	    tokens.add(i - 1, alternNode);
+	    
+	    
+	    
+	    
+	    return tokens;
+	    
+	    
+	
+	}
+
+	
+	
+
+	
+	
+	
 
 }
 
