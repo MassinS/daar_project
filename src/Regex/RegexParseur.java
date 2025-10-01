@@ -26,6 +26,11 @@ public class RegexParseur {
 	 * Marqueur de protection pour les sous-arbres parenthésés
 	 * Permet d'isoler les expressions entre parenthèses lors du parsing
 	 */
+	/* 
+	 *  Pendant le parsing : On emballe les expressions entre parenthèses dans du papier PROTECTION
+        À la fin : On déballle les cadeaux pour voir le contenu directement
+	 * 
+	 * */
 	public static final int PROTECTION = 0xBADDAD;
 
 	/**
@@ -84,6 +89,7 @@ public class RegexParseur {
 	   } catch (Exception e) {
 		   e.printStackTrace();
 	   }
+	   
 	   return null;
 	    
    }
@@ -101,34 +107,58 @@ public class RegexParseur {
 	   while (contientParentheses(tokens)) {
 	        tokens = traiterParentheses(tokens);
 	    }
+	   
 	    
 	 // ÉTAPE 2 : Étoile
-	    while (contientEtoile(tokens)  ) {
-	        tokens = traiterEtoile(tokens);
-	    }
+	   boolean modificationEtoile;
+	    do {
+	        modificationEtoile = false;
+	        for (int i = 0; i < tokens.size(); i++) {
+	            if (tokens.get(i).root == ETOILE && tokens.get(i).sousArbre.isEmpty()) {
+	                tokens = traiterEtoileAPosition(tokens, i);
+	                modificationEtoile = true;
+	                break;
+	            }
+	        }
+	    } while (modificationEtoile); 
+	    
 	    
 	 // ÉTAPE 3 : Concaténation 
-	    while (contientConcat(tokens)) {
-	        tokens = traiterConcat(tokens);
-	    }
+	    boolean modificationConcat;
+	    do {
+	        modificationConcat = false;
+	        if (contientConcat(tokens)) {
+	            tokens = traiterConcat(tokens);
+	            modificationConcat = true;
+	        }
+	    } while (modificationConcat);
+	    
 	    
 	 // ÉTAPE 4 : Alternative  
-	    while (contientAltern(tokens)) {
-	        tokens = traiterAltern(tokens);
-	    }
+	    boolean modificationAltern;
+	    do {
+	        modificationAltern = false;
+	        for (int i = 0; i < tokens.size(); i++) {
+	            if (tokens.get(i).root == ALTERN && tokens.get(i).sousArbre.isEmpty()) {
+	                tokens = traiterAlternAPosition(tokens, i);
+	                modificationAltern = true;
+	                break; // Recommencer depuis le début
+	            }
+	        }
+	    } while (modificationAltern);    
+	    
 	    
 	 // Vérifier qu'il ne reste qu'un seul élément
 	    if (tokens.size() != 1) {
 	        throw new Exception("Expression invalide");
 	    }
-		
+		   
 	    
-	    
-	    return tokens.get(0);
+	 // NETTOYAGE FINAL : supprimer les protections
+	    return removeProtection(tokens.get(0));
 	    
 		
    	}
-
 
      
     private static boolean contientParentheses(ArrayList<RegexArbre> tokens) {
@@ -136,33 +166,24 @@ public class RegexParseur {
     for (RegexArbre t: tokens) if (t.root==PARENTHESEFERMANT || t.root==PARENTHESEOUVRANT) return true;
     	    return false;  
      }
-    
-	private static boolean contientEtoile(ArrayList<RegexArbre> tokens) {
-		
-   	 for (RegexArbre t: tokens) if (t.root==ETOILE && t.sousArbre.isEmpty() ) return true;
-   	    return false;  
-    }
-	
 	
 	
 	private static boolean contientConcat(ArrayList<RegexArbre> tokens) {
+	   
+		/* Pour avoir la concatenation il doit y'avoir au moins deux caractères */
+		if (tokens.size() < 2) return false;
+	    
 	    for (int i = 0; i < tokens.size() - 1; i++) {
 	        RegexArbre current = tokens.get(i);
 	        RegexArbre next = tokens.get(i + 1);
 	        
+	        // Deux éléments consécutifs sans | entre eux = concaténation
 	        if (current.root != ALTERN && next.root != ALTERN) {
 	            return true;
 	        }
 	    }
 	    return false;
 	}
-	
-	private static boolean contientAltern(ArrayList<RegexArbre> tokens) {
-		
-   	 for (RegexArbre t: tokens) if (t.root==ALTERN && t.sousArbre.isEmpty() ) return true;
-   	    return false;  
-    } 
-	
 	
     
    private static ArrayList<RegexArbre> traiterParentheses(ArrayList<RegexArbre> tokens) throws Exception {
@@ -265,16 +286,6 @@ public class RegexParseur {
      
      
 	
-     
-     private static ArrayList<RegexArbre> traiterEtoile(ArrayList<RegexArbre> tokens) throws Exception {
-    	    for (int i = 0; i < tokens.size(); i++) {
-    	        if (tokens.get(i).root == ETOILE && tokens.get(i).sousArbre.isEmpty()) {
-    	            return traiterEtoileAPosition(tokens, i);
-    	        }
-    	    }
-    	    return tokens; // Aucune étoile trouvée
-    	}
-
 
 
 	private static ArrayList<RegexArbre> traiterEtoileAPosition(ArrayList<RegexArbre> tokens, int i) throws Exception {
@@ -361,24 +372,7 @@ public class RegexParseur {
 	    return tokens;
 	}
 	
-	
-	
-	private static ArrayList<RegexArbre> traiterAltern(ArrayList<RegexArbre> tokens) throws Exception {
-	
-		
-		 for (int i = 0; i < tokens.size(); i++) {
- 	        if (tokens.get(i).root == ALTERN && tokens.get(i).sousArbre.isEmpty()) {
- 	            return traiterAlternAPosition(tokens, i);
- 	        }
- 	    }
-		 
- 	    return tokens; // Aucune étoile trouvée
-	
-	}
-
-
-
-	private static ArrayList<RegexArbre> traiterAlternAPosition(ArrayList<RegexArbre> tokens, int i) throws Exception {
+private static ArrayList<RegexArbre> traiterAlternAPosition(ArrayList<RegexArbre> tokens, int i) throws Exception {
 		
 		// Vérifier que | n'est pas en première ou dernière position
 	    
@@ -420,21 +414,35 @@ public class RegexParseur {
 	    tokens.add(i - 1, alternNode);
 	    
 	    
-	    
-	    
 	    return tokens;
 	    
 	    
-	
 	}
 
-	
-	
 
-	
-	
-	
+	/**
+	 * Supprime les nœuds PROTECTION inutiles de l'arbre syntaxique
+	 * Un nœud PROTECTION avec un seul enfant est remplacé par cet enfant
+	 */
+	private static RegexArbre removeProtection(RegexArbre tree) throws Exception {
+	    if (tree.root == PROTECTION && tree.sousArbre.size() != 1) {
+	        throw new Exception("Nœud PROTECTION invalide");
+	    }
+	    if (tree.sousArbre.isEmpty()) {
+	        return tree;
+	    }
+	    if (tree.root == PROTECTION) {
+	        return removeProtection(tree.sousArbre.get(0));
+	    }
 
+	    // Appliquer récursivement aux enfants
+	    ArrayList<RegexArbre> newSubTrees = new ArrayList<>();
+	    for (RegexArbre child : tree.sousArbre) {
+	        newSubTrees.add(removeProtection(child));
+	    }
+	    return new RegexArbre(tree.root, newSubTrees);
+	}
+	
 }
 
 	/*

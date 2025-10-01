@@ -44,12 +44,36 @@ public class RegexArbre {
   }
   
   
-  
-  private String rootToString() {
-	
-	  return null;
-	  
+  /* Cette méthode est utilisé pour l'affichage */
+  public String rootToString() {
+      if (root == RegexParseur.CONCAT)
+          return ".";
+      if (root == RegexParseur.ETOILE)
+          return "*";
+      if (root == RegexParseur.ALTERN)
+          return "|";
+      if (root == RegexParseur.DOT)
+          return ".";
+      return Character.toString((char) root);
   }
+  
+  
+  public String afficherNotationPrefixe() {
+	    StringBuilder result = new StringBuilder();
+	    afficherPrefixeRecursif(result);
+	    return result.toString();
+	}
+  
+
+	private void afficherPrefixeRecursif(StringBuilder result) {
+	    // D'ABORD ajouter l'opérateur ou le caractère courant
+	    result.append(rootToString()).append("\n");
+	    
+	    // PUIS ajouter récursivement les enfants
+	    for (RegexArbre enfant : sousArbre) {
+	        enfant.afficherPrefixeRecursif(result);
+	    }
+	}
   
   
 
