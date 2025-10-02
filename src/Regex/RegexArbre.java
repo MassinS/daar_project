@@ -26,19 +26,6 @@ public class RegexArbre {
 	  return this.sousArbre;
   }
   
-  public RegexArbre getFilsDroite() {
-	  if(sousArbre.size()<=1) {
-		  return null;
-	  }
-	  return this.sousArbre.get(1);
-  }
-  
-  public RegexArbre getFilsGauche() {
-	  if(sousArbre.isEmpty()) {
-		  return null;
-	  }
-	  return this.sousArbre.get(0);
-  }
   public int getRoot() {
 	  return this.root;
   }
