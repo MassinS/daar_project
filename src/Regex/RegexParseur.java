@@ -16,6 +16,13 @@ public class RegexParseur {
 	 */
 	public static final int ETOILE = 0xE7011E;
 
+	
+	/**
+	 * Répresente l'opérateur plus +
+	*/
+	public static final int PLUS = 0xCAFE01;
+			
+			
 	/**
 	 * Opérateur d'alternative (ou logique)
 	 * Représente le symbole '|' dans les expressions régulières
@@ -56,6 +63,7 @@ public class RegexParseur {
     private static int charToRoot(char c) {
         if (c=='.') return DOT;
         if (c=='*') return ETOILE;
+        if (c=='+') return PLUS; 
         if (c=='|') return ALTERN;
         if (c=='(') return PARENTHESEOUVRANT;
         if (c==')') return PARENTHESEFERMANT;
@@ -67,7 +75,8 @@ public class RegexParseur {
     public static boolean estOperateur(RegexArbre arbre) {
      return arbre.root == CONCAT || 
         	arbre.root == ETOILE || 
-        	arbre.root == ALTERN || 
+        	arbre.root == ALTERN ||
+        	arbre.root == PLUS   ||  
         	arbre.root == PROTECTION ||
         	arbre.root == PARENTHESEOUVRANT || 
         	arbre.root == PARENTHESEFERMANT || 
@@ -109,43 +118,29 @@ public class RegexParseur {
 	    }
 	   
 	    
-	 // ÉTAPE 2 : Étoile
-	   boolean modificationEtoile;
-	    do {
-	        modificationEtoile = false;
-	        for (int i = 0; i < tokens.size(); i++) {
-	            if (tokens.get(i).root == ETOILE && tokens.get(i).sousArbre.isEmpty()) {
-	                tokens = traiterEtoileAPosition(tokens, i);
-	                modificationEtoile = true;
-	                break;
-	            }
-	        }
-	    } while (modificationEtoile); 
+	   // ÉTAPE 2 : Étoile
+	    while (contientEtoile(tokens)  ) {
+	        tokens = traiterEtoile(tokens);
+	    }
 	    
 	    
-	 // ÉTAPE 3 : Concaténation 
-	    boolean modificationConcat;
-	    do {
-	        modificationConcat = false;
-	        if (contientConcat(tokens)) {
-	            tokens = traiterConcat(tokens);
-	            modificationConcat = true;
-	        }
-	    } while (modificationConcat);
+	    // Etape 03  : le plus
+	    
+	    while(contientPlus(tokens)) {
+	    	tokens = traiterPlus(tokens);
+	    }
+	    
+	 // ÉTAPE 04 : Concaténation 
+	 
+	    while (contientConcat(tokens)) {
+	        tokens = traiterConcat(tokens);
+	    }
 	    
 	    
-	 // ÉTAPE 4 : Alternative  
-	    boolean modificationAltern;
-	    do {
-	        modificationAltern = false;
-	        for (int i = 0; i < tokens.size(); i++) {
-	            if (tokens.get(i).root == ALTERN && tokens.get(i).sousArbre.isEmpty()) {
-	                tokens = traiterAlternAPosition(tokens, i);
-	                modificationAltern = true;
-	                break; // Recommencer depuis le début
-	            }
-	        }
-	    } while (modificationAltern);    
+	 // ÉTAPE 05 : Alternative  
+	    while (contientAltern(tokens)) {
+	        tokens = traiterAltern(tokens);
+	    }    
 	    
 	    
 	 // Vérifier qu'il ne reste qu'un seul élément
@@ -167,6 +162,16 @@ public class RegexParseur {
     	    return false;  
      }
 	
+    private static boolean contientEtoile(ArrayList<RegexArbre> tokens) {
+		
+	   	 for (RegexArbre t: tokens) if (t.root==ETOILE && t.sousArbre.isEmpty() ) return true;
+	   	    return false;  
+	    }
+	
+	private static boolean contientPlus(ArrayList<RegexArbre> tokens) {
+	    for (RegexArbre t: tokens) if (t.root==PLUS && t.sousArbre.isEmpty()) return true;
+	    return false;  
+	}
 	
 	private static boolean contientConcat(ArrayList<RegexArbre> tokens) {
 	   
@@ -185,6 +190,12 @@ public class RegexParseur {
 	    return false;
 	}
 	
+	private static boolean contientAltern(ArrayList<RegexArbre> tokens) {
+		
+	   	 for (RegexArbre t: tokens) if (t.root==ALTERN && t.sousArbre.isEmpty() ) return true;
+	   	    return false;  
+	    } 
+		
     
    private static ArrayList<RegexArbre> traiterParentheses(ArrayList<RegexArbre> tokens) throws Exception {
 	     
@@ -285,7 +296,14 @@ public class RegexParseur {
     	}
      
      
-	
+     private static ArrayList<RegexArbre> traiterEtoile(ArrayList<RegexArbre> tokens) throws Exception {
+ 	    for (int i = 0; i < tokens.size(); i++) {
+ 	        if (tokens.get(i).root == ETOILE && tokens.get(i).sousArbre.isEmpty()) {
+ 	            return traiterEtoileAPosition(tokens, i);
+ 	        }
+ 	    }
+ 	    return tokens; // Aucune étoile trouvée
+ 	}
 
 
 	private static ArrayList<RegexArbre> traiterEtoileAPosition(ArrayList<RegexArbre> tokens, int i) throws Exception {
@@ -327,8 +345,6 @@ public class RegexParseur {
 		
 	    return tokens;
 	}
-     
-	
 
 
 	private static ArrayList<RegexArbre> traiterConcat(ArrayList<RegexArbre> tokens) throws Exception {
@@ -343,8 +359,6 @@ public class RegexParseur {
 	    }
 	    return tokens;
 	}
-	
-	
 	
 	
 	private static ArrayList<RegexArbre> traiterConcatAPosition(ArrayList<RegexArbre> tokens, int posGauche, int posDroite) throws Exception {
@@ -372,7 +386,21 @@ public class RegexParseur {
 	    return tokens;
 	}
 	
-private static ArrayList<RegexArbre> traiterAlternAPosition(ArrayList<RegexArbre> tokens, int i) throws Exception {
+	
+	private static ArrayList<RegexArbre> traiterAltern(ArrayList<RegexArbre> tokens) throws Exception {
+		
+		
+		 for (int i = 0; i < tokens.size(); i++) {
+	        if (tokens.get(i).root == ALTERN && tokens.get(i).sousArbre.isEmpty()) {
+	            return traiterAlternAPosition(tokens, i);
+	        }
+	    }
+		 
+	    return tokens; // Aucune étoile trouvée
+	
+	}
+	
+	private static ArrayList<RegexArbre> traiterAlternAPosition(ArrayList<RegexArbre> tokens, int i) throws Exception {
 		
 		// Vérifier que | n'est pas en première ou dernière position
 	    
@@ -417,9 +445,50 @@ private static ArrayList<RegexArbre> traiterAlternAPosition(ArrayList<RegexArbre
 	    return tokens;
 	    
 	    
+	}	
+	
+	private static ArrayList<RegexArbre> traiterPlus(ArrayList<RegexArbre> tokens) throws Exception {
+	    for (int i = 0; i < tokens.size(); i++) {
+	        if (tokens.get(i).root == PLUS && tokens.get(i).sousArbre.isEmpty()) {
+	            return traiterPlusAPosition(tokens, i);
+	        }
+	    }
+	    return tokens;
 	}
-
-
+	
+	
+	private static ArrayList<RegexArbre> traiterPlusAPosition(ArrayList<RegexArbre> tokens, int i) throws Exception {
+	    // Vérifier que le PLUS n'est pas en première position
+	    if (i == 0) {
+	        throw new Exception("Opérateur '+' en position initiale non autorisé");
+	    }
+	    
+	    // Prendre l'élément avant le PLUS
+	    RegexArbre elementAvant = tokens.get(i - 1);
+	    
+	    // Vérifications spécifiques
+	    if (elementAvant.root == ETOILE || elementAvant.root == PLUS) {
+	        throw new Exception("Double opérateur de répétition non autorisé");
+	    }
+	    if (elementAvant.root == ALTERN) {
+	        throw new Exception("Opérateur '+' ne peut pas suivre '|'");
+	    }
+	    
+	    // Créer le nouveau nœud PLUS
+	    ArrayList<RegexArbre> enfants = new ArrayList<>();
+	    enfants.add(elementAvant);
+	    RegexArbre plusNode = new RegexArbre(PLUS, enfants);
+	    
+	    // Remplacer les deux éléments par le nouveau nœud
+	    tokens.remove(i);    // Supprimer le +
+	    tokens.remove(i-1);  // Supprimer l'élément avant
+	    
+	    tokens.add(i-1, plusNode); // Ajouter PLUS(élément)
+	    
+	    return tokens;
+	}
+	
+	
 	/**
 	 * Supprime les nœuds PROTECTION inutiles de l'arbre syntaxique
 	 * Un nœud PROTECTION avec un seul enfant est remplacé par cet enfant
@@ -442,6 +511,10 @@ private static ArrayList<RegexArbre> traiterAlternAPosition(ArrayList<RegexArbre
 	    }
 	    return new RegexArbre(tree.root, newSubTrees);
 	}
+	
+	
+	
+	
 	
 }
 

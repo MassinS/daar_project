@@ -26,6 +26,21 @@ public class RegexArbre {
 	  return this.sousArbre;
   }
   
+  public RegexArbre getFilsDroite() {
+	  if(sousArbre.size()<=1) {
+		  return null;
+	  }
+	  return this.sousArbre.get(1);
+  }
+  
+  public RegexArbre getFilsGauche() {
+	  if(sousArbre.isEmpty()) {
+		  return null;
+	  }
+	  return this.sousArbre.get(0);
+  }
+  
+  
   public int getRoot() {
 	  return this.root;
   }
@@ -37,6 +52,8 @@ public class RegexArbre {
           return ".";
       if (root == RegexParseur.ETOILE)
           return "*";
+      if (root == RegexParseur.PLUS) 
+      return "+"; 
       if (root == RegexParseur.ALTERN)
           return "|";
       if (root == RegexParseur.DOT)
