@@ -1,17 +1,113 @@
 package Regex;
 
+import NDFA.Ndfa;
+
+import DFA.Dfa;
+import DFA.Minimisation;
+
+import java.util.Set;
+import java.util.HashSet;
 
 public class Main {
+	/* 
     public static void main(String[] args) {
-        try {
-            RegexArbre arbre = RegexParseur.parseur("(ac)|(b*)");
+    	
+    	  try {
+       
+            // ==================== ÉTAPE 1 : Regex → Arbre Syntaxique ====================
+            System.out.println("=== ÉTAPE 1 : Parsing de l'expression régulière ===");
+            String expression = "(0|1)";
+            RegexArbre arbre = RegexParseur.parseur(expression);
             
-            System.out.println("Notation préfixe:");
+            System.out.println("Expression: " + expression);
+            System.out.println("Arbre syntaxique (notation préfixe):");
             System.out.println(arbre.afficherNotationPrefixe());
+            System.out.println();
+            
+            // ==================== ÉTAPE 2 : Arbre → NDFA ====================
+            System.out.println("=== ÉTAPE 2 : Transformation en NDFA ===");
+            NDFA.Transformation transformNDFA = new NDFA.Transformation();
+            Ndfa ndfa = transformNDFA.ArbreToNdfa(arbre);
+            
+            System.out.println("NDFA créé avec succès !");
+            System.out.println("État initial NDFA: " + ndfa.etatInitial.Id);
+            System.out.println("État final NDFA: " + ndfa.etatFinal.Id);
+            System.out.println();
+            
+            // ==================== ÉTAPE 3 : NDFA → DFA ====================
+            System.out.println("=== ÉTAPE 3 : Transformation en DFA ===");
+            
+            // Définir l'alphabet (les caractères utilisés dans l'expression)
+            Set<Integer> alphabet = new HashSet<>();
+            alphabet.add((int)'0');
+            alphabet.add((int)'1'); 
+            
+            // Si tu veux gérer le point '.', ajoute tous les caractères ASCII
+            // for (int i = 32; i <= 126; i++) { alphabet.add(i); }
+            
+            DFA.Transformation transformDFA = new DFA.Transformation();
+            Dfa dfa = transformDFA.transformationToDFA(ndfa, alphabet);
+            
+            System.out.println("DFA créé avec succès !");
+            System.out.println("État initial DFA: " + dfa.etatInitial.id);
+            System.out.println("États finaux DFA: " + dfa.etatsFinaux.size());
+            System.out.println("Nombre total d'états DFA: " + dfa.etats.size());
+            System.out.println();
+            
+            // ==================== ÉTAPE 4 : DFA → DFA Minimal ====================
+            System.out.println("=== ÉTAPE 4 : Minimisation du DFA ===");
+            try {
+                Minimisation minimiseur = new Minimisation();
+                Dfa dfaMinimal = minimiseur.minimiser(dfa, alphabet);
+                
+                System.out.println("DFA minimal créé avec succès !");
+                System.out.println("État initial DFA minimal: " + dfaMinimal.etatInitial.id);
+                System.out.println("États finaux DFA minimal: " + dfaMinimal.etatsFinaux.size());
+                System.out.println("Nombre total d'états DFA minimal: " + dfaMinimal.etats.size());
+                System.out.println();
+                
+                // ==================== TESTS ====================
+                System.out.println("=== TESTS de reconnaissance ===");
+                testerAutomate(dfaMinimal, "0");   // Devrait être accepté
+                testerAutomate(dfaMinimal, "1");    // Devrait être accepté  
+             
+                
+            } catch (Exception e) {
+                System.out.println("❌ ERREUR lors de la minimisation: " + e.getMessage());
+                e.printStackTrace();
+            }
             
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    
+    	// Méthode pour tester si l'automate accepte une chaîne
+    public static void testerAutomate(Dfa dfa, String chaine) {
+        try {
+            boolean accepte = simulerDFA(dfa, chaine);
+            System.out.println("Chaîne '" + chaine + "' : " + (accepte ? "✅ ACCEPTÉE" : "❌ REJETÉE"));
+        } catch (Exception e) {
+            System.out.println("Erreur avec la chaîne '" + chaine + "': " + e.getMessage());
+        }
+    }
+    
+    // Simulation d'un DFA
+    public static boolean simulerDFA(Dfa dfa, String input) {
+        Dfa.Etat etatCourant = dfa.etatInitial;
+        
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            Dfa.Etat suivant = etatCourant.obtenirTransition((int)c);
+            
+            if (suivant == null) {
+                return false; // Aucune transition → rejet
+            }
+            etatCourant = suivant;
+        }
+        
+        return dfa.etatsFinaux.contains(etatCourant);
+    
+    }
+    */
 }
-

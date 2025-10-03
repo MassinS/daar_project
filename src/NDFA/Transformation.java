@@ -15,6 +15,10 @@ public class Transformation {
         if (arbre.getRoot() == RegexParseur.CONCAT) {
             Ndfa droite = ArbreToNdfa(arbre.getFilsDroite());
             Ndfa gauche = ArbreToNdfa(arbre.getFilsGauche());
+            
+            // RELIER les deux automates avec une epsilon-transition
+            gauche.etatFinal.ajouterTransition(droite.etatInitial);
+            
             // L'état initial est celui de gauche, l'état final est celui de droite
             return new Ndfa(gauche.etatInitial, droite.etatFinal);
         }
@@ -29,8 +33,8 @@ public class Transformation {
             Etat etatfinal = new Etat();
 
             // ε-transitions vers les NDFA gauche et droite
-            etatinitial.ajouterTransition(droite.etatInitial);
             etatinitial.ajouterTransition(gauche.etatInitial);
+            etatinitial.ajouterTransition(droite.etatInitial);
 
             // Les états finaux de gauche et droite vont vers le nouvel état final
             droite.etatFinal.ajouterTransition(etatfinal);
