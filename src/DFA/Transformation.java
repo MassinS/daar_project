@@ -44,7 +44,7 @@ public class Transformation {
 	    return result;
 	}
 	
-	public Dfa transformationToDFA(Ndfa automate, Set<Integer> alphabet) {
+	public Dfa transformationToDFA(Ndfa automate) {
 	    // 1️- ε-closure de l’état initial NDFA
 	    Set<NDFA.Etat> initClosure = epsilonClosure(Set.of(automate.etatInitial));
 
@@ -67,7 +67,7 @@ public class Transformation {
 	        Set<NDFA.Etat> currentNDFA = aTraiter.pop();
 	        Dfa.Etat currentDFA = mapping.get(currentNDFA);
 
-	        for (int symbole : alphabet) {
+	        for (int symbole=0;symbole<=256;symbole++) {
 	            // NDFA: move + epsilon-closure
 	            Set<NDFA.Etat> nextNDFA = move(currentNDFA, symbole);
 	            Set<NDFA.Etat> closure = epsilonClosure(nextNDFA);

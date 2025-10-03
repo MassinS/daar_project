@@ -59,6 +59,22 @@ public class Transformation {
 
             return new Ndfa(etatinitial, etatfinal);
         }
+        
+     // --- Cas Plus A+ ---
+        if (arbre.getRoot() == RegexParseur.PLUS) {
+        	 Etat etatinitial = new Etat();
+             Etat etatfinal = new Etat();
+             Ndfa gauche = ArbreToNdfa(arbre.getFilsGauche());
+
+             // ε-transition initiale vers le NDFA et vers le final (permet 0 occurrence)
+             etatinitial.ajouterTransition(gauche.etatInitial);
+
+             // Les transitions du NDFA vers lui-même (répétition) et vers le final
+             gauche.etatFinal.ajouterTransition(gauche.etatInitial);
+             gauche.etatFinal.ajouterTransition(etatfinal);
+
+             return new Ndfa(etatinitial, etatfinal);
+        }
 
         // --- Cas symbole simple ou DOT (.) ---
         if (arbre.getSousArbre().isEmpty()) {
