@@ -1,9 +1,11 @@
-package DFA;
+package Minimisation;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import DFA.Dfa;
 
 public class Minimisation {
 
@@ -16,7 +18,8 @@ public class Minimisation {
 	// 3. Fusion : Regrouper les états équivalents	
 	
 	
-	 public Dfa minimiser(Dfa dfa, Set<Integer> alphabet) {
+	 public Dfa minimiser(Dfa dfa) {
+		 
 		
 		 // Étape 1: Partition initiale - états finaux vs non finaux
 	        Set<Set<Dfa.Etat>> partition = new HashSet<>();
@@ -31,6 +34,12 @@ public class Minimisation {
 	        
 	        // Étape 2: Raffinement de la partition
 	        
+	        Set<Integer> alphabet = new HashSet<>();
+            for (int i = 0; i <= 256; i++) {
+                alphabet.add(i);
+            }
+            
+            
 	        boolean changed;
 	        do {
 	            changed = false;  // ← Initialiser à false au début de chaque itération
@@ -43,6 +52,7 @@ public class Minimisation {
 	                }
 	                
 	                Map<String, Set<Dfa.Etat>> signatures = new HashMap<>();
+	                
 	                
 	                for (Dfa.Etat etat : groupe) {
 	                    String signature = calculerSignature(etat, partition, alphabet);  // ← Enlever 'groupe'

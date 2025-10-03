@@ -3,20 +3,17 @@ package Regex;
 import NDFA.Ndfa;
 
 import DFA.Dfa;
-import DFA.Minimisation;
-
-import java.util.Set;
-import java.util.HashSet;
+import Minimisation.Minimisation;
 
 public class Main {
-	/* 
+	
     public static void main(String[] args) {
     	
     	  try {
        
             // ==================== ÉTAPE 1 : Regex → Arbre Syntaxique ====================
             System.out.println("=== ÉTAPE 1 : Parsing de l'expression régulière ===");
-            String expression = "(0|1)";
+            String expression = "(a|(/*))";
             RegexArbre arbre = RegexParseur.parseur(expression);
             
             System.out.println("Expression: " + expression);
@@ -37,16 +34,11 @@ public class Main {
             // ==================== ÉTAPE 3 : NDFA → DFA ====================
             System.out.println("=== ÉTAPE 3 : Transformation en DFA ===");
             
-            // Définir l'alphabet (les caractères utilisés dans l'expression)
-            Set<Integer> alphabet = new HashSet<>();
-            alphabet.add((int)'0');
-            alphabet.add((int)'1'); 
-            
             // Si tu veux gérer le point '.', ajoute tous les caractères ASCII
             // for (int i = 32; i <= 126; i++) { alphabet.add(i); }
             
             DFA.Transformation transformDFA = new DFA.Transformation();
-            Dfa dfa = transformDFA.transformationToDFA(ndfa, alphabet);
+            Dfa dfa = transformDFA.transformationToDFA(ndfa);
             
             System.out.println("DFA créé avec succès !");
             System.out.println("État initial DFA: " + dfa.etatInitial.id);
@@ -58,7 +50,10 @@ public class Main {
             System.out.println("=== ÉTAPE 4 : Minimisation du DFA ===");
             try {
                 Minimisation minimiseur = new Minimisation();
-                Dfa dfaMinimal = minimiseur.minimiser(dfa, alphabet);
+                long startTime = System.currentTimeMillis();
+                Dfa dfaMinimal = minimiseur.minimiser(dfa);
+                long endTime = System.currentTimeMillis();
+                System.out.println("Temps de minimisation: " + (endTime - startTime) + "ms");
                 
                 System.out.println("DFA minimal créé avec succès !");
                 System.out.println("État initial DFA minimal: " + dfaMinimal.etatInitial.id);
@@ -68,9 +63,11 @@ public class Main {
                 
                 // ==================== TESTS ====================
                 System.out.println("=== TESTS de reconnaissance ===");
-                testerAutomate(dfaMinimal, "0");   // Devrait être accepté
-                testerAutomate(dfaMinimal, "1");    // Devrait être accepté  
-             
+                testerAutomate(dfaMinimal, "a");   // Devrait être accepté
+                testerAutomate(dfaMinimal, "//");    // Devrait être accepté  
+                testerAutomate(dfaMinimal, "");  // ❌  devrait  être accepté
+                testerAutomate(dfaMinimal, "aa");  // ❌ Ne devrait pas être accepté
+                testerAutomate(dfaMinimal, "ba");  // ❌ Ne devrait pas être accepté
                 
             } catch (Exception e) {
                 System.out.println("❌ ERREUR lors de la minimisation: " + e.getMessage());
@@ -109,5 +106,5 @@ public class Main {
         return dfa.etatsFinaux.contains(etatCourant);
     
     }
-    */
+    
 }
