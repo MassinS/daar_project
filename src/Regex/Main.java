@@ -13,7 +13,7 @@ public class Main {
        
             // ==================== ÉTAPE 1 : Regex → Arbre Syntaxique ====================
             System.out.println("=== ÉTAPE 1 : Parsing de l'expression régulière ===");
-            String expression = "(a|(/*))";
+            String expression = "a.b";
             RegexArbre arbre = RegexParseur.parseur(expression);
             
             System.out.println("Expression: " + expression);
@@ -63,7 +63,7 @@ public class Main {
                 
                 // ==================== TESTS ====================
                 System.out.println("=== TESTS de reconnaissance ===");
-                testerAutomate(dfaMinimal, "a");   // Devrait être accepté
+                testerAutomate(dfaMinimal, "acb");   // Devrait être accepté
                 testerAutomate(dfaMinimal, "//");    // Devrait être accepté  
                 testerAutomate(dfaMinimal, "");  // ❌  devrait  être accepté
                 testerAutomate(dfaMinimal, "aa");  // ❌ Ne devrait pas être accepté
