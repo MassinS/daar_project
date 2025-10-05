@@ -17,7 +17,7 @@ public class Dfa {
     public static class Etat {
         private static int compteur = 0;
         public final int id;
-        private final Map<Integer, Etat> transitions; // symbole → état unique
+        public final Map<Integer, Etat> transitions; // symbole → état unique
 
         public Etat() {
             this.id = compteur++;
