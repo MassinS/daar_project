@@ -22,7 +22,8 @@ public class Minimisation {
 		 
 		
 		 // Étape 1: Partition initiale - états finaux vs non finaux
-	        Set<Set<Dfa.Etat>> partition = new HashSet<>();
+	     
+		 Set<Set<Dfa.Etat>> partition = new HashSet<>();
 	        
 	        Set<Dfa.Etat> finaux = new HashSet<>(dfa.etatsFinaux);
 	        Set<Dfa.Etat> nonFinaux = new HashSet<>(dfa.etats);
@@ -42,7 +43,7 @@ public class Minimisation {
             
 	        boolean changed;
 	        do {
-	            changed = false;  // ← Initialiser à false au début de chaque itération
+	            changed = false;
 	            Set<Set<Dfa.Etat>> nouvellePartition = new HashSet<>();
 	            
 	            for (Set<Dfa.Etat> groupe : partition) {
@@ -55,7 +56,7 @@ public class Minimisation {
 	                
 	                
 	                for (Dfa.Etat etat : groupe) {
-	                    String signature = calculerSignature(etat, partition, alphabet);  // ← Enlever 'groupe'
+	                    String signature = calculerSignature(etat, partition, alphabet);
 	                    signatures.computeIfAbsent(signature, k -> new HashSet<>()).add(etat);
 	                }
 	                
@@ -63,10 +64,10 @@ public class Minimisation {
 	            }
 	            
 	            if (!partition.equals(nouvellePartition)) {
-	                changed = true;  // ← Seulement si ça change
+	                changed = true; 
 	                partition = nouvellePartition;
 	            }
-	        } while (changed);  // ← Boucle do-while
+	        } while (changed);
 	        
 	            
 	        
@@ -78,7 +79,7 @@ public class Minimisation {
 		 
 
 	
-	 private String calculerSignature(Dfa.Etat etat, Set<Set<Dfa.Etat>> partition, 
+	 public String calculerSignature(Dfa.Etat etat, Set<Set<Dfa.Etat>> partition, 
              Set<Integer> alphabet) {
 			
 			StringBuilder signature = new StringBuilder();
@@ -88,13 +89,13 @@ public class Minimisation {
 			  Dfa.Etat suivant = etat.obtenirTransition(symbole);
 			 
 			 if (suivant == null) {
-			signature.append("N"); // Null
+			signature.append("N"); 
 			     } 
 			 else {
-			// Trouver à quel groupe appartient l'état suivant
+
 			for (Set<Dfa.Etat> p : partition) {
 			if (p.contains(suivant)) {
-			signature.append(p.hashCode()); // Identifiant du groupe
+			signature.append(p.hashCode());
 			break;
 				}
 			 }
@@ -117,7 +118,7 @@ public class Minimisation {
 	             groupeVersEtat.put(groupe, new Dfa.Etat());
 	         }
 	         
-	         // Trouver l'état initial minimal
+	         
 	         Dfa.Etat etatInitialMinimal = null;
 	         for (Set<Dfa.Etat> groupe : partition) {
 	             if (groupe.contains(dfa.etatInitial)) {
@@ -126,7 +127,6 @@ public class Minimisation {
 	             }
 	         }
 	         
-	         // Trouver les états finaux minimaux
 	         Set<Dfa.Etat> etatsFinauxMinimal = new HashSet<>();
 	         for (Set<Dfa.Etat> groupe : partition) {
 	             for (Dfa.Etat etat : groupe) {
@@ -137,18 +137,16 @@ public class Minimisation {
 	             }
 	         }
 	         
-	         // On Construit les transitions
-	         for (Set<Dfa.Etat> groupe : partition) {
+	          for (Set<Dfa.Etat> groupe : partition) {
 	             Dfa.Etat etatMinimal = groupeVersEtat.get(groupe);
 	             
-	             // Prendre un représentant du groupe (n'importe quel état)
 	             Dfa.Etat representant = groupe.iterator().next();
 	             
 	             for (int symbole : alphabet) {
 	                 Dfa.Etat suivantOriginal = representant.obtenirTransition(symbole);
 	                 if (suivantOriginal != null) {
-	                     // Trouver le groupe de l'état suivant
-	                     for (Set<Dfa.Etat> groupeSuivant : partition) {
+	                 
+	                	 for (Set<Dfa.Etat> groupeSuivant : partition) {
 	                         if (groupeSuivant.contains(suivantOriginal)) {
 	                             Dfa.Etat etatSuivantMinimal = groupeVersEtat.get(groupeSuivant);
 	                             etatMinimal.ajouterTransition(symbole, etatSuivantMinimal);
@@ -159,15 +157,10 @@ public class Minimisation {
 	             }
 	         }
 	         
-	         // Tous les états du DFA minimal
 	         Set<Dfa.Etat> etatsMinimal = new HashSet<>(groupeVersEtat.values());
 	         
 	         return new Dfa(etatInitialMinimal, etatsFinauxMinimal, etatsMinimal);
 	     }
-	 
-
-
-
 
 }
 

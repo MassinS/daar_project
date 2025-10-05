@@ -24,12 +24,10 @@ public class Dfa {
             this.transitions = new HashMap<>();
         }
 
-        /** Ajouter une transition (déterministe) */
         public void ajouterTransition(int symbole, Etat suivant) {
             transitions.put(symbole, suivant);
         }
 
-        /** Obtenir la transition pour un symbole */
         public Etat obtenirTransition(int symbole) {
             return transitions.get(symbole); // peut renvoyer null si pas défini
         }

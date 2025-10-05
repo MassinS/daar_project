@@ -361,7 +361,6 @@ public class RegexParseur {
 	}
 	
 	
-	
 	private static ArrayList<RegexArbre> traiterPlus(ArrayList<RegexArbre> tokens) throws Exception {
 	    for (int i = 0; i < tokens.size(); i++) {
 	        if (tokens.get(i).root == PLUS && tokens.get(i).sousArbre.isEmpty()) {
@@ -373,7 +372,8 @@ public class RegexParseur {
 	
 	
 	private static ArrayList<RegexArbre> traiterPlusAPosition(ArrayList<RegexArbre> tokens, int i) throws Exception {
-	    // Vérifier que le PLUS n'est pas en première position
+	   
+		// Vérifier que le PLUS n'est pas en première position
 	    if (i == 0) {
 	        throw new Exception("Opérateur '+' en position initiale non autorisé");
 	    }
