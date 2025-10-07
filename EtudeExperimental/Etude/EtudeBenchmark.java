@@ -21,29 +21,24 @@ import Regex.RegexParseur;
 public class EtudeBenchmark {
 
     
-    // TES VARIABLES EXISTANTES
     private static Transformation transformNDFA = new Transformation();
     private static DFA.Transformation transformDFA = new DFA.Transformation();
     private static Minimisation minimiseur = new Minimisation();
     
     public static void main(String[] args) {
-        System.out.println("🚀 DÉMARRAGE DE L'ÉTUDE DE PERFORMANCE");
-        System.out.println("======================================\n");
         
         try {
-            // Étape 1: Charger le texte
             String text = chargerTexte("56667-0.txt");
-            System.out.println("📖 Texte chargé: " + text.length() + " caractères\n");
+            System.out.println(" Texte chargé: " + text.length() + " caractères\n");
             
-            // Étape 2: Définir les patterns de test
             String[] patterns = {
                 "Sargon",           // Simple
                 "S(a|r)gon",        // Moyen  
                 "S.*g",             // Moyen
-                "\\S(a|g|r)+on"     // Complexe
+                "\\S(a|g|r)+on",     // Complexe
+                "ab"
             };
             
-            // Étape 3: Lancer les benchmarks
             List<ResultatBenchmark> resultats = new ArrayList<>();
             
             for (String pattern : patterns) {
@@ -57,11 +52,9 @@ public class EtudeBenchmark {
                 resultats.add(resKMP);
                 resultats.add(resEgrep);
                 
-                // Affichage immédiat
                 afficherComparaison(resAutomate, resKMP, resEgrep);
             }
             
-            // Étape 4: Générer le rapport final
             genererRapportFinal(resultats);
             
         } catch (Exception e) {
@@ -75,13 +68,11 @@ public class EtudeBenchmark {
         try {
             long debutTotal = System.currentTimeMillis();
             
-            // Construction de l'automate
             RegexArbre arbre = RegexParseur.parseur(pattern);
             Ndfa ndfa = transformNDFA.ArbreToNdfa(arbre);
             Dfa dfa = transformDFA.transformationToDFA(ndfa);
             Dfa dfaMinimal = minimiseur.minimiser(dfa);
             
-            // ⚡ COMPTER LES MATCHES RÉELS
             String[] lines = text.split("\n");
             int totalMatches = 0;
             for (String line : lines) {
@@ -93,7 +84,6 @@ public class EtudeBenchmark {
             
             System.out.println("   🤖 Automate Time: " + tempsTotal + "ms - " + totalMatches + " matches");
             
-            // ⚡ RETOURNER LE VRAI NOMBRE DE MATCHES
             return new ResultatBenchmark(pattern, "Automate", tempsTotal, totalMatches);
             
         } catch (Exception e) {
@@ -103,32 +93,36 @@ public class EtudeBenchmark {
     }
     
     
-    private static int rechercherAvecDFA(String line, Dfa dfa) {
-        int matchesInLine = 0;
+    private static int rechercherAvecDFA(String text, Dfa dfa) {
+        int totalMatches = 0;
         
-        for (int start = 0; start < line.length(); start++) {
+        for (int start = 0; start < text.length(); start++) {
             Dfa.Etat currentState = dfa.etatInitial;
             int currentPos = start;
+            boolean foundMatchThisStart = false;
             
-            while (currentPos < line.length()) {
-                char currentChar = line.charAt(currentPos);
+            while (currentPos < text.length() && !foundMatchThisStart) {
+                char currentChar = text.charAt(currentPos);
                 Dfa.Etat nextState = currentState.obtenirTransition((int)currentChar);
                 
                 if (nextState == null) {
-                    break;
+                    break; // Aucune transition possible
                 }
                 
                 currentState = nextState;
                 currentPos++;
                 
+                // ⚡ CORRECTION: Ne compter qu'UNE FOIS par position de départ
                 if (dfa.etatsFinaux.contains(currentState)) {
-                    matchesInLine++;
-                    System.out.println("Match trouvé: '" + line.substring(start, currentPos) + "'");
+                    totalMatches++;
+                    foundMatchThisStart = true;
+                    // Optionnel: logging pour debug
+                    // System.out.println("Match DFA: '" + text.substring(start, currentPos) + "'");
                 }
             }
         }
         
-        return matchesInLine;
+        return totalMatches;
     }
     
     private static ResultatBenchmark benchmarkKMP(String pattern, String text) {
@@ -164,41 +158,32 @@ public class EtudeBenchmark {
     
     private static ResultatBenchmark benchmarkEgrep(String pattern, String fichier) {
         try {
-        	 
-        	 long debut = System.nanoTime();
-        	 
-        	 ProcessBuilder pb = new ProcessBuilder("egrep", pattern, fichier);
-             pb.redirectErrorStream(true);
+            long debut = System.nanoTime();
+
+            ProcessBuilder pb = new ProcessBuilder("egrep", "-o", pattern, fichier);
+            pb.redirectErrorStream(true);
 
             Process process = pb.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-            String line;
-            String tempsTexte = null;
-            int lineCount = 0;
-            while ((line = reader.readLine()) != null) {
-                if (line.startsWith("Temps:")) {
-                    tempsTexte = line.substring(6).trim();
-                } else {
-                    lineCount++; // ⚡ CHAQUE LIGNE = UN MATCH
-                }
+            // ⚡ CORRECTION: Compter CHAQUE LIGNE = CHAQUE OCCURRENCE
+            int occurrenceCount = 0;
+            while (reader.readLine() != null) {
+                occurrenceCount++;
             }
 
             process.waitFor();
-            
+
             long fin = System.nanoTime();
             long temps = (fin - debut) / 1_000_000;
-            
 
+            System.out.println("   🐧 Egrep Time: " + temps + "ms - " + occurrenceCount + " occurrences");
 
-            // ⚡ RETOURNER LE VRAI NOMBRE DE MATCHES (lignes)
-            return new ResultatBenchmark(pattern, "EgrepScript", temps, lineCount);
+            return new ResultatBenchmark(pattern, "Egrep", temps, occurrenceCount);
 
         } catch (Exception e) {
-            System.err.println("❌ Erreur script egrep: " + e.getMessage());
-            long temps = 30 + new Random().nextInt(40);
-            System.out.println("   🐧 Egrep (fallback): " + temps + "ms");
-            return new ResultatBenchmark(pattern, "EgrepScript", temps, 0);
+            System.err.println("❌ Erreur egrep: " + e.getMessage());
+            return new ResultatBenchmark(pattern, "Egrep", -1, 0);
         }
     }
 
