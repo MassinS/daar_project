@@ -63,7 +63,7 @@ public class Main {
                 
                 // ==================== TESTS ====================
                 System.out.println("=== TESTS de reconnaissance ===");
-                testerAutomate(dfaMinimal, "acb");   // Devrait être accepté
+                testerAutomate(dfaMinimal, "zacb");   // Devrait être accepté
                 testerAutomate(dfaMinimal, "//");    // Devrait être accepté  
                 testerAutomate(dfaMinimal, "");  // ❌  devrait  être accepté
                 testerAutomate(dfaMinimal, "aa");  // ❌ Ne devrait pas être accepté
