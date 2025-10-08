@@ -86,7 +86,7 @@ public class EtudeBenchmark {
         try {
             long debut = System.nanoTime();
 
-            ProcessBuilder pb = new ProcessBuilder("egrep", "-o", pattern, fichier);
+            ProcessBuilder pb = new ProcessBuilder("egrep","-o",pattern, fichier);
             pb.redirectErrorStream(true);
 
             Process process = pb.start();

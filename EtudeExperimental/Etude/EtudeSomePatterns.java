@@ -30,8 +30,8 @@ public class EtudeSomePatterns {
                 
                 ResultatBenchmark resAutomate = EtudeBenchmark.benchmarkAutomate(pattern, text);
                 ResultatBenchmark resKMP = EtudeBenchmark.benchmarkKMP(pattern, text);
-                ResultatBenchmark resEgrep = EtudeBenchmark.benchmarkEgrep(pattern, "56667-0.txt");
-                
+                ResultatBenchmark resEgrep = EtudeBenchmark.benchmarkEgrep(pattern, "Samples/56667-0.txt");
+                 
                 resultats.add(resAutomate);
                 resultats.add(resKMP);
                 resultats.add(resEgrep);
@@ -44,7 +44,6 @@ public class EtudeSomePatterns {
             }
              
             EtudeBenchmark.genererRapportFinal(resultats,"Result/Benchmark_performance_KMP_automate_egrep.csv");
-            
             
             genererGraphique(nomsPatterns, tempsAutomate, tempsKMP, tempsEgrep);
             
