@@ -161,6 +161,9 @@ public class Minimisation {
 	         
 	         return new Dfa(etatInitialMinimal, etatsFinauxMinimal, etatsMinimal);
 	     }
+	     
+	     
+	     
 
 }
 
