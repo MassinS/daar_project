@@ -42,8 +42,9 @@ public class EtudeSomePatterns {
                 
                 EtudeBenchmark.afficherComparaison(resAutomate, resKMP, resEgrep);
             }
+             
+            EtudeBenchmark.genererRapportFinal(resultats,"Result/Benchmark_performance_KMP_automate_egrep.csv");
             
-            EtudeBenchmark.genererRapportFinal(resultats);
             
             genererGraphique(nomsPatterns, tempsAutomate, tempsKMP, tempsEgrep);
             

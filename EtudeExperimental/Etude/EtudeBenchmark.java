@@ -138,10 +138,10 @@ public class EtudeBenchmark {
         System.out.println();
     }
     
-    
-    public static void genererCSV(List<ResultatBenchmark> resultats) {
+     
+    public static void genererCSV(List<ResultatBenchmark> resultats,String Text) {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("Result/benchmark_results.csv"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(Text));
             writer.write("pattern,methode,temps_ms,matches\n");
             
             for (ResultatBenchmark res : resultats) {
@@ -158,11 +158,11 @@ public class EtudeBenchmark {
     }
     
     
-    public static void genererRapportFinal(List<ResultatBenchmark> resultats) {
+    public static void genererRapportFinal(List<ResultatBenchmark> resultats,String Text) {
         System.out.println("\n RAPPORT FINAL DE PERFORMANCE");
         System.out.println("==============================\n");
         
-        genererCSV(resultats);
+        genererCSV(resultats,Text);
         
         Map<String, List<ResultatBenchmark>> parMethode = new HashMap<>();
         for (ResultatBenchmark res : resultats) {
