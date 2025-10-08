@@ -11,4 +11,7 @@ public class Ndfa {
         this.etatInitial = etatInitial;
         this.etatFinal = etatFinal;
     }
+    public Etat getEtatFinal() {
+    	return this.etatFinal;
+    }
 }

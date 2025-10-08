@@ -86,8 +86,10 @@ public class Transformation {
                 etatinitial.ajouterTransition(arbre.getRoot(), etatfinal);
             } else {
                 // DOT = n'importe quel caractère (ASCII 0 à 256)
-                for (int i = 0; i <= 256; i++) {
-                    etatinitial.ajouterTransition(i, etatfinal);
+                for (int i = 0; i <= 255; i++) {
+                	 if (i != 10 && i != 13) { 
+                         etatinitial.ajouterTransition(i, etatfinal);
+                     }
                 }
             }
 

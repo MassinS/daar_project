@@ -67,7 +67,7 @@ public class Transformation {
 	        Set<NDFA.Etat> currentNDFA = aTraiter.pop();
 	        Dfa.Etat currentDFA = mapping.get(currentNDFA);
 
-	        for (int symbole=0;symbole<=256;symbole++) {
+	        for (int symbole=0;symbole<256;symbole++) {
 	            // NDFA: move + epsilon-closure
 	            Set<NDFA.Etat> nextNDFA = move(currentNDFA, symbole);
 	            Set<NDFA.Etat> closure = epsilonClosure(nextNDFA);
@@ -87,18 +87,18 @@ public class Transformation {
 	        }
 	    }
 
-	    // 3️- Détermination des états finaux du DFA
-	    for (Map.Entry<Set<NDFA.Etat>, Dfa.Etat> entry : mapping.entrySet()) {
-	        Set<NDFA.Etat> ensembleNDFA = entry.getKey();
-	        Dfa.Etat etatDFA = entry.getValue();
+	 // déterminer états finaux (préfère isFinal() si disponible)
+        for (Map.Entry<Set<NDFA.Etat>, Dfa.Etat> entry : mapping.entrySet()) {
+            Set<NDFA.Etat> ensembleNDFA = entry.getKey();
+            Dfa.Etat etatDFA = entry.getValue();
 
-	        for (NDFA.Etat n : ensembleNDFA) {
-	            if (n == automate.etatFinal) {
-	                etatsFinaux.add(etatDFA);
-	                break;
-	            }
-	        }
-	    }
+            for (NDFA.Etat n : ensembleNDFA) {
+                if (n.equals(automate.getEtatFinal())) {
+                    etatsFinaux.add(etatDFA);
+                    break;
+                }
+            }
+        }
 
 	    return new Dfa(etatInitialDFA, etatsFinaux, etats);
 	}

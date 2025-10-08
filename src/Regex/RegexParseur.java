@@ -58,7 +58,6 @@ public class RegexParseur {
 	 */
 	public static final int DOT = 0xD07;
 	
-	
     
     private static int charToRoot(char c) {
         if (c=='.') return DOT;
@@ -69,7 +68,6 @@ public class RegexParseur {
         if (c==')') return PARENTHESEFERMANT;
         return (int)c;
       }
-    
     
     
     public static boolean estOperateur(RegexArbre arbre) {

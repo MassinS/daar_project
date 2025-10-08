@@ -36,7 +36,7 @@ public class EtudeBenchmark {
                 "S(a|r)gon",        // Moyen  
                 "S.*g",             // Moyen
                 "\\S(a|g|r)+on",     // Complexe
-                "ab"
+                "S(.)*g"
             };
             
             List<ResultatBenchmark> resultats = new ArrayList<>();
@@ -95,14 +95,17 @@ public class EtudeBenchmark {
     
     private static int rechercherAvecDFA(String text, Dfa dfa) {
         int totalMatches = 0;
+        int index = 0;
+        int n = text.length();
         
-        for (int start = 0; start < text.length(); start++) {
+        while (index < n) {
             Dfa.Etat currentState = dfa.etatInitial;
-            int currentPos = start;
-            boolean foundMatchThisStart = false;
+            int currentIndex = index;
+            int lastMatchEnd = -1;
             
-            while (currentPos < text.length() && !foundMatchThisStart) {
-                char currentChar = text.charAt(currentPos);
+            // Chercher le match le plus LONG possible à partir de index
+            while (currentIndex < n) {
+                char currentChar = text.charAt(currentIndex);
                 Dfa.Etat nextState = currentState.obtenirTransition((int)currentChar);
                 
                 if (nextState == null) {
@@ -110,15 +113,27 @@ public class EtudeBenchmark {
                 }
                 
                 currentState = nextState;
-                currentPos++;
+                currentIndex++;
                 
-                // ⚡ CORRECTION: Ne compter qu'UNE FOIS par position de départ
+                // Mémoriser la fin du dernier match trouvé (le plus long)
                 if (dfa.etatsFinaux.contains(currentState)) {
-                    totalMatches++;
-                    foundMatchThisStart = true;
-                    // Optionnel: logging pour debug
-                    // System.out.println("Match DFA: '" + text.substring(start, currentPos) + "'");
+                    lastMatchEnd = currentIndex;
                 }
+            }
+            
+            // Si on a trouvé un match
+            if (lastMatchEnd != -1) {
+                totalMatches++;
+                // ⚡ CORRECTION : Avancer APRÈS la fin du match trouvé
+                index = lastMatchEnd;
+                
+                // Debug optionnel
+                String match = text.substring(index - (lastMatchEnd - index), lastMatchEnd);
+                System.out.println("   ✅ Match #" + totalMatches + ": '" + match + 
+                        "' positions "  + "-" + (lastMatchEnd - 1));
+            } else {
+                // Aucun match trouvé à partir de cette position, avancer d'un caractère
+                index++;
             }
         }
         
