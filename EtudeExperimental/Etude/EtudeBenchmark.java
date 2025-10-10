@@ -84,9 +84,10 @@ public class EtudeBenchmark {
     
     public static ResultatBenchmark benchmarkEgrep(String pattern, String fichier) {
         try {
-        	
-        	String commande = String.format("time egrep -o '%s' '%s'", pattern, fichier);
-            ProcessBuilder pb = new ProcessBuilder("wsl", "bash", "-c", commande);
+        	String patternEchapper = "\"" + pattern + "\"" ;
+            ProcessBuilder pb = new ProcessBuilder("wsl", "time", "egrep", "-o", patternEchapper, fichier);
+            pb.redirectErrorStream(true);
+
             Process process = pb.start();
             
             StringBuilder sortieComplete = new StringBuilder();
@@ -97,7 +98,8 @@ public class EtudeBenchmark {
                 while ((ligne = reader.readLine()) != null) {
                     sortieComplete.append(ligne).append("\n");
                     
-                    if ( !ligne.trim().isEmpty() && !ligne.startsWith("real") && !ligne.startsWith("user") && !ligne.startsWith("sys")) {
+                    // Compter les occurrences (tout sauf les lignes time)
+                    if ( !ligne.trim().isEmpty() &&!ligne.startsWith("real") && !ligne.startsWith("user") && !ligne.startsWith("sys")) {
                         occurrenceCount++;
                     }
                 }
@@ -105,7 +107,7 @@ public class EtudeBenchmark {
 
             process.waitFor();
             
-          
+            
             long tempsMs = extraireTempsReel(sortieComplete.toString());
             
             System.out.println(" 🐧 Egrep Time: " + tempsMs + "ms - " + occurrenceCount + " occurrences");
@@ -124,9 +126,9 @@ public class EtudeBenchmark {
             String[] lignes = sortieComplete.split("\n");
             
             for (String ligne : lignes) {
-                if (ligne.startsWith("real")) {
+                if (ligne.startsWith("user")) {
                     // Format: "real    0m0.024s"
-                    String tempsStr = ligne.replace("real", "").trim();
+                    String tempsStr = ligne.replace("user", "").trim();
                     
                     // Enlever "m" et "s", séparer minutes et secondes
                     tempsStr = tempsStr.replace("m", " ").replace("s", "").trim();
