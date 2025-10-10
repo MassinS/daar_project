@@ -1,4 +1,4 @@
 pattern,methode,temps_ms,matches
-a,Automate,492,45555
-a,KMP,27,45555
-a,Egrep,-1,0
+S(a|r)+gon,Automate,127,29
+S(a|r)+gon,KMP,-1,0
+S(a|r)+gon,Egrep,29,29

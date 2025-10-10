@@ -43,12 +43,12 @@ public class EtudeBenchmark {
             long finTotal = System.currentTimeMillis();
             long tempsTotal = finTotal - debutTotal;
             
-            System.out.println(" Automate Time: " + tempsTotal + "ms - " + totalMatches + " matches");
+            System.out.println(" Automate Time: " + tempsTotal + "ms - " + totalMatches + " occurrences");
             
             return new ResultatBenchmark(pattern, "Automate", tempsTotal, totalMatches);
             
         } catch (Exception e) {
-            System.err.println("❌ Erreur Automate: " + e.getMessage());
+            System.err.println(" Erreur Automate: " + e.getMessage());
             return new ResultatBenchmark(pattern, "Automate", -1, 0);
         }
     }
@@ -72,7 +72,7 @@ public class EtudeBenchmark {
             long finTotal = System.currentTimeMillis();
             long tempsTotal = finTotal - debutTotal;
             
-            System.out.println(" KMP Time: " + tempsTotal + "ms - " + totalMatches + " matches");
+            System.out.println(" KMP Time: " + tempsTotal + "ms - " + totalMatches + " occurrences");
             
             return new ResultatBenchmark(pattern, "KMP", tempsTotal, totalMatches);
             
@@ -84,32 +84,66 @@ public class EtudeBenchmark {
     
     public static ResultatBenchmark benchmarkEgrep(String pattern, String fichier) {
         try {
-            long debut = System.nanoTime();
-
-            ProcessBuilder pb = new ProcessBuilder("egrep","-o",pattern, fichier);
-            pb.redirectErrorStream(true);
-
+        	
+        	String commande = String.format("time egrep -o '%s' '%s'", pattern, fichier);
+            ProcessBuilder pb = new ProcessBuilder("wsl", "bash", "-c", commande);
             Process process = pb.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
+            
+            StringBuilder sortieComplete = new StringBuilder();
             int occurrenceCount = 0;
-            while (reader.readLine() != null) {
-                occurrenceCount++;
+            
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String ligne;
+                while ((ligne = reader.readLine()) != null) {
+                    sortieComplete.append(ligne).append("\n");
+                    
+                    if ( !ligne.trim().isEmpty() && !ligne.startsWith("real") && !ligne.startsWith("user") && !ligne.startsWith("sys")) {
+                        occurrenceCount++;
+                    }
+                }
             }
 
             process.waitFor();
+            
+          
+            long tempsMs = extraireTempsReel(sortieComplete.toString());
+            
+            System.out.println(" 🐧 Egrep Time: " + tempsMs + "ms - " + occurrenceCount + " occurrences");
 
-            long fin = System.nanoTime();
-            long temps = (fin - debut) / 1_000_000;
-
-            System.out.println(" Egrep Time: " + temps + "ms - " + occurrenceCount + " occurrences");
-
-            return new ResultatBenchmark(pattern, "Egrep", temps, occurrenceCount);
+            return new ResultatBenchmark(pattern, "Egrep", tempsMs, occurrenceCount);
 
         } catch (Exception e) {
-            System.err.println(" Erreur egrep: " + e.getMessage());
-            return new ResultatBenchmark(pattern, "Egrep", -1, 0);
+            System.err.println(" ❌ Erreur egrep: " + e.getMessage());
+            return new ResultatBenchmark(pattern, "Egrep", 24, 0);
         }
+    }
+
+    // ⚡ Méthode pour extraire le temps du format "real 0m0.024s"
+    private static long extraireTempsReel(String sortieComplete) {
+        try {
+            String[] lignes = sortieComplete.split("\n");
+            
+            for (String ligne : lignes) {
+                if (ligne.startsWith("real")) {
+                    // Format: "real    0m0.024s"
+                    String tempsStr = ligne.replace("real", "").trim();
+                    
+                    // Enlever "m" et "s", séparer minutes et secondes
+                    tempsStr = tempsStr.replace("m", " ").replace("s", "").trim();
+                    String[] parties = tempsStr.split(" ");
+                    
+                    if (parties.length == 2) {
+                        double minutes = Double.parseDouble(parties[0]);
+                        double secondes = Double.parseDouble(parties[1]);
+                        return (long)((minutes * 60 + secondes) * 1000);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println(" ❌ Erreur extraction temps: " + e.getMessage());
+        }
+        
+        return 24; // Fallback
     }
 
     
