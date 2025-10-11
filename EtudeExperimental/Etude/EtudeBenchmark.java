@@ -174,6 +174,25 @@ public class EtudeBenchmark {
         System.out.println();
     }
     
+    public static void afficherComparaison(ResultatBenchmark automate, ResultatBenchmark egrep) {
+        System.out.println("Résultats:");
+        System.out.printf("Automate: %.2fms - %d matches\n", automate.tempsMoyen, automate.nbMatches);
+        System.out.printf("Egrep: %.2fms\n", egrep.tempsMoyen);
+        
+        
+        
+        if (automate.tempsMoyen > 0 && egrep.tempsMoyen > 0) {
+            double ratioAE = automate.tempsMoyen / egrep.tempsMoyen;
+            String gagnantAE = ratioAE > 1 ? "Egrep" : "Automate";
+            double facteurAE = ratioAE > 1 ? ratioAE : 1/ratioAE;
+            System.out.printf("   ⚡ %s est %.2fx plus rapide que %s\n", 
+                gagnantAE, facteurAE, gagnantAE.equals("Egrep") ? "Automate" : "Egrep");
+        }
+        
+        System.out.println();
+    }
+    
+    
      
     public static void genererCSV(List<ResultatBenchmark> resultats,String Text) {
         try {
