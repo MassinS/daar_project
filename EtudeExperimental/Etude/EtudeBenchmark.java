@@ -110,12 +110,12 @@ public class EtudeBenchmark {
             
             long tempsMs = extraireTempsReel(sortieComplete.toString());
             
-            System.out.println(" 🐧 Egrep Time: " + tempsMs + "ms - " + occurrenceCount + " occurrences");
+            System.out.println(" Egrep Time: " + tempsMs + "ms - " + occurrenceCount + " occurrences");
 
             return new ResultatBenchmark(pattern, "Egrep", tempsMs, occurrenceCount);
 
         } catch (Exception e) {
-            System.err.println(" ❌ Erreur egrep: " + e.getMessage());
+            System.err.println(" Erreur egrep: " + e.getMessage());
             return new ResultatBenchmark(pattern, "Egrep", 24, 0);
         }
     }
@@ -205,10 +205,10 @@ public class EtudeBenchmark {
             }
             
             writer.close();
-            System.out.println("💾 Fichier CSV généré: benchmark_results.csv");
+            System.out.println(" Fichier CSV généré: benchmark_results.csv");
             
         } catch (IOException e) {
-            System.err.println("❌ Erreur génération CSV: " + e.getMessage());
+            System.err.println(" Erreur génération CSV: " + e.getMessage());
         }
     }
     
@@ -236,7 +236,7 @@ public class EtudeBenchmark {
                 methode, tempsMoyen, resMethode.size());
         }
         
-        System.out.println("\n✅ ÉTUDE TERMINÉE - Voir benchmark_results.csv");
+        System.out.println("\n ÉTUDE TERMINÉE - Voir benchmark_results.csv");
     }  
     
 }

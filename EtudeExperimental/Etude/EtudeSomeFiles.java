@@ -32,7 +32,7 @@ public class EtudeSomeFiles {
 	            // Vérifier que les fichiers existent
 	            for (String fichier : fichiers) {
 	                if (!Files.exists(Paths.get(fichier))) {
-	                    System.err.println("❌ Fichier manquant: " + fichier);
+	                    System.err.println(" Fichier manquant: " + fichier);
 	                    return;
 	                }
 	            }
@@ -43,7 +43,7 @@ public class EtudeSomeFiles {
 	            }
 	            
 	        } catch (Exception e) {
-	            System.err.println("❌ Erreur: " + e.getMessage());
+	            System.err.println(" Erreur: " + e.getMessage());
 	            e.printStackTrace();
 	        }
 	    }
@@ -58,7 +58,7 @@ public class EtudeSomeFiles {
 	            List<Long> taillesFichiers = new ArrayList<>();
 	            
 	            for (String fichier : fichiers) {
-	                System.out.println("   📁 Fichier: " + fichier);
+	                System.out.println(" Fichier: " + fichier);
 	                
 	                String text = RechercheDFA.chargerTexte(fichier);
 	                long taille = Files.size(Paths.get(fichier));
@@ -71,14 +71,14 @@ public class EtudeSomeFiles {
 	                tempsKMP.add((long)resKMP.tempsMoyen);
 	                tempsEgrep.add((long)resEgrep.tempsMoyen);
 	                nomsFichiers.add(new File(fichier).getName());
-	                taillesFichiers.add(taille / 1024); // Taille en KB
+	                taillesFichiers.add(taille / 1024); 
 	            }
 	            
 	            // Générer le graphique
 	            genererDiagrammeBaton(pattern, nomsFichiers, taillesFichiers, tempsAutomate, tempsKMP, tempsEgrep);
 	            
 	        } catch (Exception e) {
-	            System.err.println("❌ Erreur pour le pattern " + pattern + ": " + e.getMessage());
+	            System.err.println(" Erreur pour le pattern " + pattern + ": " + e.getMessage());
 	        }
 	    }
 	    
@@ -201,12 +201,12 @@ public class EtudeSomeFiles {
 	            String nomFichierSafe = pattern.replaceAll("[^a-zA-Z0-9]", "_");
 	            File output = new File("Result/Result_Test_Some_files/pattern_" + nomFichierSafe + ".png");
 	            ImageIO.write(image, "png", output);
-	            System.out.println("📊 Graphique généré: " + output.getName());
+	            System.out.println(" Graphique généré: " + output.getName());
 	            
 	            g2d.dispose();
 	            
 	        } catch (Exception e) {
-	            System.err.println("❌ Erreur génération diagramme: " + e.getMessage());
+	            System.err.println(" Erreur génération diagramme: " + e.getMessage());
 	        }
 	    }
 	

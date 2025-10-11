@@ -37,7 +37,7 @@ public class RechercheDFA {
 	                matchesInLine++;
 	                if (afficherMatches) {
 	                    String match = line.substring(start, lastMatchEnd);
-	                    System.out.println("      ✅ Match trouvé: '" + match + "'");
+	                    System.out.println("         Match trouvé: '" + match + "'");
 	                    System.out.println("         Ligne: \"" + line + "\"");
 	                    System.out.println("         Position: " + start + "-" + (lastMatchEnd-1));
 	                }

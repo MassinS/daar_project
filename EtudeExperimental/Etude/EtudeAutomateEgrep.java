@@ -62,18 +62,18 @@ private static void genererGraphique(List<String> patterns, List<Long> automate,
         if (patterns == null || patterns.isEmpty() ||
             automate == null || automate.isEmpty() ||
             egrep == null || egrep.isEmpty()) {
-            System.err.println("❌ Données insuffisantes pour générer le graphique.");
+            System.err.println(" Données insuffisantes pour générer le graphique.");
             return;
         }
 
         if (patterns.size() != automate.size() || patterns.size() != egrep.size()) {
-            System.err.println("❌ Les listes patterns, automate et egrep doivent avoir la même taille.");
+            System.err.println(" Les listes patterns, automate et egrep doivent avoir la même taille.");
             return;
         }
 
         int pointCount = patterns.size();
         if (pointCount < 2) {
-            System.err.println("❌ Au moins 2 points sont nécessaires pour tracer un graphique.");
+            System.err.println(" Au moins 2 points sont nécessaires pour tracer un graphique.");
             return;
         }
 
@@ -158,12 +158,12 @@ private static void genererGraphique(List<String> patterns, List<Long> automate,
         // Sauvegarde de l'image
         File output = new File("Result/Result_performance_automate_egrep/performance_graph.png");
         ImageIO.write(image, "png", output);
-        System.out.println("📊 Graphique généré: Result/Result_performance_automate_egrep/performance_graph.png");
+        System.out.println(" Graphique généré: Result/Result_performance_automate_egrep/performance_graph.png");
 
         g2d.dispose();
 
     } catch (Exception e) {
-        System.err.println("❌ Erreur génération graphique: " + e.getMessage());
+        System.err.println(" Erreur génération graphique: " + e.getMessage());
         e.printStackTrace();
     }
 }

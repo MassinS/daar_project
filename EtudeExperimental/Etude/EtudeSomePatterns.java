@@ -132,12 +132,12 @@ public class EtudeSomePatterns {
             
             File output = new File("Result/Result_performance_KMP_automate_egrep/performance_graph.png");
             ImageIO.write(image, "png", output);
-            System.out.println("📊 Graphique généré: Result/performance_automate_kmp_egrep_graph.png");
+            System.out.println(" Graphique généré: Result/performance_automate_kmp_egrep_graph.png");
             
             g2d.dispose();
             
         } catch (Exception e) {
-            System.err.println("❌ Erreur génération graphique: " + e.getMessage());
+            System.err.println(" Erreur génération graphique: " + e.getMessage());
         }
     }
 }
