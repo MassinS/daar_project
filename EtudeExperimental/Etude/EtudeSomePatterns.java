@@ -43,7 +43,7 @@ public class EtudeSomePatterns {
                 EtudeBenchmark.afficherComparaison(resAutomate, resKMP, resEgrep);
             }
              
-            EtudeBenchmark.genererRapportFinal(resultats,"Result/Benchmark_performance_KMP_automate_egrep.csv");
+            EtudeBenchmark.genererRapportFinal(resultats,"Result/Result_performance_KMP_automate_egrep/Benchmark_performance_KMP_automate_egrep.csv");
             
             genererGraphique(nomsPatterns, tempsAutomate, tempsKMP, tempsEgrep);
             
@@ -130,7 +130,7 @@ public class EtudeSomePatterns {
             g2d.drawString("Patterns", width / 2 - 20, height - 20);
             g2d.drawString("Temps (ms)", 10, height / 2);
             
-            File output = new File("Result/performance_graph.png");
+            File output = new File("Result/Result_performance_KMP_automate_egrep/performance_graph.png");
             ImageIO.write(image, "png", output);
             System.out.println("📊 Graphique généré: Result/performance_automate_kmp_egrep_graph.png");
             
