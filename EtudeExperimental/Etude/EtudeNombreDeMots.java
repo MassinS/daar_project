@@ -22,6 +22,8 @@ public class EtudeNombreDeMots {
       * 
       * Les résultats sont stocké dans Result_Occurence_KMP_automate_egrep
       * 
+      * Remarque importante : les fichiers petit.txt , moyen.txt , grand.txt sont des fichiers telechargé de la 
+      * bibliothèque Gutenberg ( on les a renommé c'est tout )
       */
 	
     public static void main(String[] args) {

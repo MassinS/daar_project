@@ -1,4 +1,4 @@
-package DFAMinimisaion;
+package DFAMinimisation;
 
 
 import org.junit.jupiter.api.Test;
