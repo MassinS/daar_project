@@ -16,7 +16,7 @@ jar: compile
 	$(JAR) cfe binaire.jar Launcher.Main -C $(BIN_DIR) .
 
 run: jar
-	java -jar binaire.jar automate "hello" Samples/56667-0.txt 
+	java -jar binaire.jar $(ARG1) $(ARG2) $(ARG3)
 
 clean:
 	rm -rf $(BIN_DIR) binaire.jar
