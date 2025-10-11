@@ -12,6 +12,7 @@ import NDFA.Ndfa;
 import Regex.RegexArbre;
 import Regex.RegexParseur;
 
+// Test unitaire pour la Transformation en DFA
 
 public class TransformationDfaTest {
     private DFA.Transformation transformDfa;
@@ -31,7 +32,6 @@ public class TransformationDfaTest {
     public void testEpsilonClosure_SansEpsilon() {
         
     	NDFA.Etat etat1 = new NDFA.Etat();
-        NDFA.Etat etat2 = new NDFA.Etat();
         
         Set<NDFA.Etat> etatsInitiaux = Set.of(etat1);
         
@@ -118,10 +118,15 @@ public class TransformationDfaTest {
     
     @Test
     public void testTransformationConcatenation() throws Exception {
-        RegexArbre a = new RegexArbre('a', new ArrayList<>());
+    	
+    	ArrayList<RegexArbre> enfants = new ArrayList<>();
+    	
+    	RegexArbre a = new RegexArbre('a', new ArrayList<>());
         RegexArbre b = new RegexArbre('b', new ArrayList<>());
+        enfants.add(a);
+        enfants.add(b);
         RegexArbre concat = new RegexArbre(RegexParseur.CONCAT, 
-            new ArrayList<>() {{ add(a); add(b); }});
+           enfants);
         
         Ndfa ndfa = transformNdfa.ArbreToNdfa(concat);
         
@@ -139,11 +144,14 @@ public class TransformationDfaTest {
     
     @Test
     public void testTransformationAlternative() throws Exception {
+    	ArrayList<RegexArbre> enfants = new ArrayList<>();
         RegexArbre a = new RegexArbre('a', new ArrayList<>());
         RegexArbre b = new RegexArbre('b', new ArrayList<>());
+        enfants.add(a);
+        enfants.add(b);
         RegexArbre altern = new RegexArbre(RegexParseur.ALTERN, 
-            new ArrayList<>() {{ add(a); add(b); }});
-        
+            enfants );
+         
         Ndfa ndfa = transformNdfa.ArbreToNdfa(altern);
         
         Dfa dfa = transformDfa.transformationToDFA(ndfa);
@@ -158,10 +166,13 @@ public class TransformationDfaTest {
     
     @Test
     public void testTransformationEtoile() throws Exception {
-      
+        
+    	ArrayList<RegexArbre> enfants = new ArrayList<>();
     	RegexArbre a = new RegexArbre('a', new ArrayList<>());
+    	enfants.add(a);
+         
         RegexArbre etoile = new RegexArbre(RegexParseur.ETOILE, 
-            new ArrayList<>() {{ add(a); }});
+            enfants) ;
         
         Ndfa ndfa = transformNdfa.ArbreToNdfa(etoile);
         
@@ -179,9 +190,13 @@ public class TransformationDfaTest {
     @Test
     public void testTransformationPlus() throws Exception {
        
+    	ArrayList<RegexArbre> enfants = new ArrayList<>();
+    	
     	RegexArbre a = new RegexArbre('a', new ArrayList<>());
-        RegexArbre plus = new RegexArbre(RegexParseur.PLUS, 
-            new ArrayList<>() {{ add(a); }});
+        enfants.add(a);
+    	
+    	RegexArbre plus = new RegexArbre(RegexParseur.PLUS, 
+            enfants);
         
         Ndfa ndfa = transformNdfa.ArbreToNdfa(plus);
         
@@ -199,15 +214,21 @@ public class TransformationDfaTest {
     
     @Test
     public void testTransformationDot() throws Exception {
-      
+    	
+    	ArrayList<RegexArbre> enfants1 = new ArrayList<>();
+    	ArrayList<RegexArbre> enfants2 = new ArrayList<>();
+        
     	RegexArbre a = new RegexArbre('a', new ArrayList<>());
         RegexArbre dot = new RegexArbre(RegexParseur.DOT, new ArrayList<>());
         RegexArbre b = new RegexArbre('b', new ArrayList<>());
-        
+        enfants1.add(a);
+        enfants1.add(dot);
         RegexArbre concat1 = new RegexArbre(RegexParseur.CONCAT, 
-            new ArrayList<>() {{ add(a); add(dot); }});
+           enfants1);
+        enfants2.add(concat1);
+        enfants2.add(b);
         RegexArbre concat2 = new RegexArbre(RegexParseur.CONCAT, 
-            new ArrayList<>() {{ add(concat1); add(b); }});
+            enfants2 );
         
         Ndfa ndfa = transformNdfa.ArbreToNdfa(concat2);
         
@@ -245,10 +266,14 @@ public class TransformationDfaTest {
     @Test
     public void testDeterminismePasDeChoixMultiples() throws Exception {
        
+    	ArrayList<RegexArbre> enfants = new ArrayList<>();
+    	
     	RegexArbre a = new RegexArbre('a', new ArrayList<>());
         RegexArbre b = new RegexArbre('a', new ArrayList<>()); // Même caractère !
+        enfants.add(a);
+        enfants.add(b);
         RegexArbre altern = new RegexArbre(RegexParseur.ALTERN, 
-            new ArrayList<>() {{ add(a); add(b); }});
+           enfants);
         
         Ndfa ndfa = transformNdfa.ArbreToNdfa(altern);
         Dfa dfa = transformDfa.transformationToDFA(ndfa);

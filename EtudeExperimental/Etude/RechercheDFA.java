@@ -8,6 +8,9 @@ import DFA.Dfa;
 
 public class RechercheDFA {
 	
+			/*  Cette classe est un ensemble de méthode utilisé dans plusieurs étude 
+			 * 
+			 */
 	 public static int rechercherAvecDFA(String line, Dfa dfa, boolean afficherMatches) {
 	        int matchesInLine = 0;
 	        int lineLength = line.length();

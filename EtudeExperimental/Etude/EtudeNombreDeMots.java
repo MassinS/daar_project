@@ -15,7 +15,15 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 public class EtudeNombreDeMots {
-
+	
+	 /**
+	  *  Étude comparative du nombre d'occurrences trouvées par les 3 méthodes.
+      * à vrai dire on teste est ce que on obtiendra toujours le même nombre d'occurence 
+      * 
+      * Les résultats sont stocké dans Result_Occurence_KMP_automate_egrep
+      * 
+      */
+	
     public static void main(String[] args) {
         try {
             String fichier = "Samples/56667-0.txt";
@@ -38,14 +46,14 @@ public class EtudeNombreDeMots {
                 ResultatBenchmark resEgrep = EtudeBenchmark.benchmarkEgrep(pattern, fichier);
 
                 tousResultats.add(new PatternResult(pattern, 
-                    resAutomate.nbMatches, 
-                    resKMP.nbMatches, 
-                    resEgrep.nbMatches));
+                    resAutomate.nbrOccurence, 
+                    resKMP.nbrOccurence, 
+                    resEgrep.nbrOccurence));
 
                 System.out.println(" Résultats pour le pattern: " + pattern);
-                System.out.println(" Automate: " + resAutomate.nbMatches + " occurrences");
-                System.out.println(" KMP: " + resKMP.nbMatches + " occurrences");
-                System.out.println(" Egrep: " + resEgrep.nbMatches + " occurrences");
+                System.out.println(" Automate: " + resAutomate.nbrOccurence + " occurrences");
+                System.out.println(" KMP: " + resKMP.nbrOccurence + " occurrences");
+                System.out.println(" Egrep: " + resEgrep.nbrOccurence + " occurrences");
                 System.out.println();
             }
 

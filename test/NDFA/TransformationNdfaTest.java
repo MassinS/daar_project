@@ -3,6 +3,7 @@ package NDFA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -12,6 +13,8 @@ import org.junit.Test;
 
 import Regex.RegexArbre;
 import Regex.RegexParseur;
+
+// Test unitaire pour le transformation en NDFA
 
 public class TransformationNdfaTest {
 
@@ -39,20 +42,24 @@ public class TransformationNdfaTest {
     }
 	
 	@Test
-    public void testCaractereDot() throws Exception {
-       
-		RegexArbre arbre = new RegexArbre(RegexParseur.DOT, new ArrayList<>());
-        
-        Ndfa ndfa = transform.ArbreToNdfa(arbre);
-        
-        assertNotNull(ndfa);
-        
-        for (int i = 0; i <= 256; i++) {
-            assertTrue(ndfa.etatInitial.getTransitions(i).contains(ndfa.etatFinal),
-                "DOT doit avoir une transition pour le caractère " + i);
-        }
-    }
-	
+	public void testCaractereDot() throws Exception {
+	   
+	    RegexArbre arbre = new RegexArbre(RegexParseur.DOT, new ArrayList<>());
+	    
+	    Ndfa ndfa = transform.ArbreToNdfa(arbre);
+	    
+	    assertNotNull(ndfa);
+	    
+	    // Tester que DOT matche tous les caractères SAUF \n (10) et \r (13)
+	    for (int i = 0; i <= 255; i++) {
+	        boolean shouldMatch = (i != 10 && i != 13); // Votre logique
+	        boolean actuallyMatches = ndfa.etatInitial.getTransitions(i).contains(ndfa.etatFinal);
+	        
+	        assertEquals(shouldMatch, actuallyMatches,
+	            "DOT devrait " + (shouldMatch ? "matcher" : "NE PAS matcher") + 
+	            " le caractère " + i + " ('" + (char)i + "')");
+	    }
+	}
 	
     
 	
@@ -60,11 +67,17 @@ public class TransformationNdfaTest {
 	 
 	@Test
 	public void testConcatenation() throws Exception {
-	    // Arrange
+	    
+		ArrayList<RegexArbre> enfants = new ArrayList<>();
+    	
+		
 	    RegexArbre a = new RegexArbre('a', new ArrayList<>());
 	    RegexArbre b = new RegexArbre('b', new ArrayList<>());
+	    enfants.add(a);
+	    enfants.add(b);
+	    
 	    RegexArbre concat = new RegexArbre(RegexParseur.CONCAT, 
-	        new ArrayList<>() {{ add(a); add(b); }});
+	        enfants);
 	    
 	    Ndfa ndfa = transform.ArbreToNdfa(concat);
 	    
@@ -92,10 +105,14 @@ public class TransformationNdfaTest {
 	@Test
     public void testAlternativeCaracteresSpeciaux() throws Exception {
         
+		ArrayList<RegexArbre> enfants = new ArrayList<>();
+    	
 		RegexArbre dollar = new RegexArbre('$', new ArrayList<>());
         RegexArbre pourcent = new RegexArbre('%', new ArrayList<>());
+        enfants.add(pourcent);
+        enfants.add(dollar);
         RegexArbre altern = new RegexArbre(RegexParseur.ALTERN, 
-            new ArrayList<>() {{ add(dollar); add(pourcent); }});
+            enfants);
         
         
         Ndfa ndfa = transform.ArbreToNdfa(altern);
@@ -118,13 +135,19 @@ public class TransformationNdfaTest {
 	@Test
     public void testEtoileSurConcatenation() throws Exception {
       
+		ArrayList<RegexArbre> enfants1 = new ArrayList<>();
+		ArrayList<RegexArbre> enfants2 = new ArrayList<>();
+    	
 		RegexArbre a = new RegexArbre('a', new ArrayList<>());
         RegexArbre b = new RegexArbre('b', new ArrayList<>());
+        enfants1.add(a);
+        enfants1.add(b);
         RegexArbre concat = new RegexArbre(RegexParseur.CONCAT, 
-            new ArrayList<>() {{ add(a); add(b); }});
+            enfants1);
+        enfants2.add(concat);
         RegexArbre etoile = new RegexArbre(RegexParseur.ETOILE, 
-            new ArrayList<>() {{ add(concat); }});
-        
+            enfants2);
+         
         Ndfa ndfa = transform.ArbreToNdfa(etoile);
         
        

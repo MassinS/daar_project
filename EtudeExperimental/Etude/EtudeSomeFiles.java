@@ -18,6 +18,22 @@ import javax.imageio.ImageIO;
 
 public class EtudeSomeFiles {
 
+	/**
+	 * Étude comparative des 3 méthodes de recherche sur 3 fichiers de tailles différentes.
+	 * 
+	 * Fichiers utilisé : petit.txt  (≈100 KB) , moyen.txt  (≈500 KB) , grand.txt  (≈1 MB)
+	 * 
+	 * Méthodes comparées sont : Egrep , automate et KMP
+	 *
+	 * Pour CHAQUE pattern, génère un graphique avec 9 barres groupées :
+	 * - Groupe 1 (fichier petit.txt) : Automate + KMP + Egrep
+	 * - Groupe 2 (fichier moyen.txt) : Automate + KMP + Egrep  
+	 * - Groupe 3 (fichier grand.txt) : Automate + KMP + Egrep
+	 * 
+	 * Chaque image PNG = 1 pattern avec 9 mesures de performance.
+	 * 
+	 * - Les resultats sont stocké dans le dossier Result/Result_test_some_files
+	 */
 	 public static void main(String[] args) {
 	        try {
 	            // Fichiers de tailles croissantes
@@ -67,9 +83,9 @@ public class EtudeSomeFiles {
 	                ResultatBenchmark resKMP = EtudeBenchmark.benchmarkKMP(pattern, text);
 	                ResultatBenchmark resEgrep = EtudeBenchmark.benchmarkEgrep(pattern, fichier);
 	                
-	                tempsAutomate.add((long)resAutomate.tempsMoyen);
-	                tempsKMP.add((long)resKMP.tempsMoyen);
-	                tempsEgrep.add((long)resEgrep.tempsMoyen);
+	                tempsAutomate.add((long)resAutomate.temps);
+	                tempsKMP.add((long)resKMP.temps);
+	                tempsEgrep.add((long)resEgrep.temps);
 	                nomsFichiers.add(new File(fichier).getName());
 	                taillesFichiers.add(taille / 1024); 
 	            }

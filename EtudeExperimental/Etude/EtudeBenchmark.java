@@ -82,6 +82,13 @@ public class EtudeBenchmark {
         }
     }
     
+    /* ici l'idée que m'a venu à l'esprit après 04 jours de penser 
+     * j'ai pensé à ajouter l'argument time de la commande egrep pour mesurer exactement le temps d'execution
+     * de la commande egrep 
+     * 
+     * SURTOUT QUE J'UTILISE WINDOWS donc je suis obligé d'utiliser la commande WSL  !!!!!!!!!!!!
+     * 
+     *  */
     public static ResultatBenchmark benchmarkEgrep(String pattern, String fichier) {
         try {
         	String patternEchapper = "\"" + pattern + "\"" ;
@@ -120,7 +127,7 @@ public class EtudeBenchmark {
         }
     }
 
-    // ⚡ Méthode pour extraire le temps du format "real 0m0.024s"
+    //  Méthode pour extraire le temps du format "real 0m0.024s"
     private static long extraireTempsReel(String sortieComplete) {
         try {
             String[] lignes = sortieComplete.split("\n");
@@ -148,41 +155,42 @@ public class EtudeBenchmark {
         return 24; // Fallback
     }
 
-    
+    /* Utilisé pour le debugage seulement */
     public static void afficherComparaison(ResultatBenchmark automate, ResultatBenchmark kmp, ResultatBenchmark egrep) {
         System.out.println("Résultats:");
-        System.out.printf("Automate: %.2fms - %d matches\n", automate.tempsMoyen, automate.nbMatches);
-        System.out.printf("KMP: %.2fms - %d matches\n", kmp.tempsMoyen, kmp.nbMatches);
-        System.out.printf("Egrep: %.2fms\n", egrep.tempsMoyen);
+        System.out.printf("Automate: %.2fms - %d matches\n", automate.temps, automate.nbrOccurence);
+        System.out.printf("KMP: %.2fms - %d matches\n", kmp.temps, kmp.nbrOccurence);
+        System.out.printf("Egrep: %.2fms\n", egrep.temps);
         
-        if (automate.tempsMoyen > 0 && kmp.tempsMoyen > 0) {
-            double ratioAK = automate.tempsMoyen / kmp.tempsMoyen;
+        if (automate.temps > 0 && kmp.temps > 0) {
+            double ratioAK = automate.temps / kmp.temps;
             String gagnantAK = ratioAK > 1 ? "KMP" : "Automate";
             double facteurAK = ratioAK > 1 ? ratioAK : 1/ratioAK;
-            System.out.printf("   ⚡ %s est %.2fx plus rapide que %s\n", 
+            System.out.printf(" %s est %.2fx plus rapide que %s\n", 
                 gagnantAK, facteurAK, gagnantAK.equals("KMP") ? "Automate" : "KMP");
         }
         
-        if (automate.tempsMoyen > 0 && egrep.tempsMoyen > 0) {
-            double ratioAE = automate.tempsMoyen / egrep.tempsMoyen;
+        if (automate.temps > 0 && egrep.temps > 0) {
+            double ratioAE = automate.temps / egrep.temps;
             String gagnantAE = ratioAE > 1 ? "Egrep" : "Automate";
             double facteurAE = ratioAE > 1 ? ratioAE : 1/ratioAE;
-            System.out.printf("   ⚡ %s est %.2fx plus rapide que %s\n", 
+            System.out.printf(" %s est %.2fx plus rapide que %s\n", 
                 gagnantAE, facteurAE, gagnantAE.equals("Egrep") ? "Automate" : "Egrep");
         }
         
         System.out.println();
     }
     
+    /* Utilisé pour le debugage seulement */
     public static void afficherComparaison(ResultatBenchmark automate, ResultatBenchmark egrep) {
         System.out.println("Résultats:");
-        System.out.printf("Automate: %.2fms - %d matches\n", automate.tempsMoyen, automate.nbMatches);
-        System.out.printf("Egrep: %.2fms\n", egrep.tempsMoyen);
+        System.out.printf("Automate: %.2fms - %d matches\n", automate.temps, automate.nbrOccurence);
+        System.out.printf("Egrep: %.2fms\n", egrep.temps);
         
         
         
-        if (automate.tempsMoyen > 0 && egrep.tempsMoyen > 0) {
-            double ratioAE = automate.tempsMoyen / egrep.tempsMoyen;
+        if (automate.temps > 0 && egrep.temps > 0) {
+            double ratioAE = automate.temps / egrep.temps;
             String gagnantAE = ratioAE > 1 ? "Egrep" : "Automate";
             double facteurAE = ratioAE > 1 ? ratioAE : 1/ratioAE;
             System.out.printf("   ⚡ %s est %.2fx plus rapide que %s\n", 
@@ -193,6 +201,11 @@ public class EtudeBenchmark {
     }
     
     
+    /* Utilisé pour générer un fichier CSV propre pour démontrer les résulats */
+    /* Ce fichier est généré seulement dans le cas de test des 03 méthode sur patterns simple ( Classe EtudeSomePatterns ) 
+     * Sinon pour le reste on a pas besoin 
+     * 
+     * */
      
     public static void genererCSV(List<ResultatBenchmark> resultats,String Text) {
         try {
@@ -201,7 +214,7 @@ public class EtudeBenchmark {
             
             for (ResultatBenchmark res : resultats) {
                 writer.write(String.format("%s,%s,%d,%d\n",
-                    res.pattern, res.methode, (int)res.tempsMoyen, res.nbMatches));
+                    res.pattern, res.methode, (int)res.temps, res.nbrOccurence));
             }
             
             writer.close();
@@ -229,7 +242,7 @@ public class EtudeBenchmark {
             List<ResultatBenchmark> resMethode = entry.getValue();
             
             double tempsMoyen = resMethode.stream()
-                .mapToDouble(r -> r.tempsMoyen)
+                .mapToDouble(r -> r.temps)
                 .average().orElse(0);
             
             System.out.printf("%s: %.2fms (sur %d patterns)\n", 

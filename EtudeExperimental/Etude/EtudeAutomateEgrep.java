@@ -20,6 +20,12 @@ public class EtudeAutomateEgrep {
 	
 public static void main(String[] args) {
         
+	   		/*
+	   		 * - Benchmark de patterns complexe pour tester la performance de Egrep et automate seulement 
+	   		 * 
+	   		 * - Les resultats sont stocké dans le dossier Result/Result_performance_automate_egrep
+	   		 */
+	
         try {
             String text = RechercheDFA.chargerTexte("Samples/56667-0.txt");
             List<String> patterns = Files.readAllLines(Paths.get("Samples/patternsComplex.txt"));
@@ -40,8 +46,8 @@ public static void main(String[] args) {
                 resultats.add(resAutomate);
                 resultats.add(resEgrep);
                 
-                tempsAutomate.add((long)resAutomate.tempsMoyen);
-                tempsEgrep.add((long)resEgrep.tempsMoyen);
+                tempsAutomate.add((long)resAutomate.temps);
+                tempsEgrep.add((long)resEgrep.temps);
                 
                 EtudeBenchmark.afficherComparaison(resAutomate, resEgrep);
             }

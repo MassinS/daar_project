@@ -15,6 +15,7 @@ import NDFA.Transformation ;
 import Regex.RegexArbre;
 import Regex.RegexParseur;
 
+// Test unitaire pour la transformation de DFA -> DFA minimaliste
 
 public class DfaMinimisationTest {
 
@@ -80,10 +81,12 @@ public class DfaMinimisationTest {
 	
     @Test
     public void testMinimisation_EtoileDejaMinimale() throws Exception {
-       
+    	
+    	ArrayList<RegexArbre> enfants = new ArrayList<>();
     	RegexArbre a = new RegexArbre('a', new ArrayList<>());
-        RegexArbre etoile = new RegexArbre(RegexParseur.ETOILE, 
-            new ArrayList<>() {{ add(a); }});
+    	enfants.add(a);
+    	RegexArbre etoile = new RegexArbre(RegexParseur.ETOILE, 
+            enfants);
         Dfa dfaOriginal = creerDFA(etoile);
         
         Dfa dfaMinimal = minimiseur.minimiser(dfaOriginal);
@@ -103,11 +106,16 @@ public class DfaMinimisationTest {
     @Test
     public void testMinimisation_ReductionEtats() throws Exception {
        
+    	ArrayList<RegexArbre> enfants = new ArrayList<>();
+        
     	// "a|a" devrait se réduire à "a"
-        RegexArbre a1 = new RegexArbre('a', new ArrayList<>());
+        
+    	RegexArbre a1 = new RegexArbre('a', new ArrayList<>());
         RegexArbre a2 = new RegexArbre('a', new ArrayList<>());
+        enfants.add(a1);
+        enfants.add(a2);
         RegexArbre altern = new RegexArbre(RegexParseur.ALTERN, 
-            new ArrayList<>() {{ add(a1); add(a2); }});
+            enfants);
         
         Dfa dfaOriginal = creerDFA(altern);
         int etatsOriginaux = dfaOriginal.etats.size();
@@ -126,10 +134,14 @@ public class DfaMinimisationTest {
     @Test
     public void testMinimisation_ComportementIdentique() throws Exception {
        
+    	ArrayList<RegexArbre> enfants = new ArrayList<>();
+        
     	RegexArbre a = new RegexArbre('a', new ArrayList<>());
         RegexArbre b = new RegexArbre('b', new ArrayList<>());
+        enfants.add(a);
+        enfants.add(b);
         RegexArbre concat = new RegexArbre(RegexParseur.CONCAT, 
-            new ArrayList<>() {{ add(a); add(b); }});
+            enfants);
         
         Dfa dfaOriginal = creerDFA(concat);
         
