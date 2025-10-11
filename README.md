@@ -1,4 +1,4 @@
-# Projet Egrep clone - Recherche de Motifs
+# Clone de egrep avec support partiel des ERE.
 - Ce projet est un clone simplifié de la commande egrep, permettant la recherche de motifs (expressions régulières) avec différentes méthodes (automate, KMP, comparateur...).
 
 ## Installation et exécution
