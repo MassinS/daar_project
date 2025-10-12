@@ -4,10 +4,18 @@
 ## Installation et exécution
 
 ### Prérequis :
-- Java 8 ou supérieur.
-- Javac.
+- Ce projet nécessite Java 11 ou supérieur.
 - JUnit pour les tests unitaires.
 - WSL (pour la méthode egrep sur Windows).
+
+### Règle de compatibilité :
+**La version d'exécution (JRE) doit être ÉGALE ou SUPÉRIEURE à la version de compilation (JDK)**
+
+### Exemples :
+- ✅ Compilé avec Java 11 → Exécutable sur Java 11, 17, 19, 22
+- ✅ Compilé avec Java 17 → Exécutable sur Java 17, 19, 22  
+- ❌ Compilé avec Java 22 → NON exécutable sur Java 11, 17, 19
+
 
 ### Exécution rapide avec MakeFile :
 ```bash

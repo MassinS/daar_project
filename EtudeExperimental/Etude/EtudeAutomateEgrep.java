@@ -162,9 +162,9 @@ private static void genererGraphique(List<String> patterns, List<Long> automate,
         g2d.drawString("Temps (ms)", 10, height / 2);
 
         // Sauvegarde de l'image
-        File output = new File("Result/Result_performance_automate_egrep/performance_graph.png");
+        File output = new File("Result/Result_performance_automate_egrep/performance_egrep_automate_graph.png");
         ImageIO.write(image, "png", output);
-        System.out.println(" Graphique généré: Result/Result_performance_automate_egrep/performance_graph.png");
+        System.out.println(" Graphique généré: Result/Result_performance_automate_egrep/performance_egrep_automate_graph.png");
 
         g2d.dispose();
 

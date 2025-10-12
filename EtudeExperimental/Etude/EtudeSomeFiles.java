@@ -217,7 +217,7 @@ public class EtudeSomeFiles {
 	            String nomFichierSafe = pattern.replaceAll("[^a-zA-Z0-9]", "_");
 	            File output = new File("Result/Result_Test_Some_files/pattern_" + nomFichierSafe + ".png");
 	            ImageIO.write(image, "png", output);
-	            System.out.println(" Graphique généré: " + output.getName());
+	            System.out.println(" Graphique généré dans Result/Result_Test_Some_files/" + output.getName());
 	            
 	            g2d.dispose();
 	            
