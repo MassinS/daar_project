@@ -8,7 +8,6 @@ public class Main {
 
      
 	// Couleurs pour l'affichage
-    public static final String GREEN = "\u001B[32m";
     public static final String RED = "\u001B[31m";
     public static final String BLUE = "\u001B[34m";
     public static final String RESET = "\u001B[0m";
@@ -32,9 +31,9 @@ public class Main {
 	        
 	        try {
 	            String text = RechercheDFA.chargerTexte(filePath);
-	            System.out.println("📁 Fichier : " + filePath + " (" + text.length() + " caractères)");
-	            System.out.println("🔍 Pattern : " + pattern);
-	            System.out.println("⚡ Méthode : " + method.toUpperCase());
+	            System.out.println(" Fichier : " + filePath + " (" + text.length() + " caractères)");
+	            System.out.println(" Pattern : " + pattern);
+	            System.out.println(" Méthode : " + method.toUpperCase());
 	            System.out.println();
 
 	            switch (method) {
@@ -51,14 +50,14 @@ public class Main {
 	                    comparerToutesMethodes(pattern, text, filePath);
 	                    break;
 	                default:
-	                    System.out.println(RED + "❌ Méthode inconnue : " + method + RESET);
+	                    System.out.println(RED + " Méthode inconnue : " + method + RESET);
 	                    afficherAide();
 	            }
 
 	        } catch (IOException e) {
-	            System.err.println(RED + "❌ Erreur fichier : " + e.getMessage() + RESET);
+	            System.err.println(RED + " Erreur de fichier : " + e.getMessage()  + RESET);
 	        } catch (Exception e) {
-	            System.err.println(RED + "❌ Erreur : " + e.getMessage() + RESET);
+	            System.err.println(RED + " Erreur : " + e.getMessage() + RESET);
 	            e.printStackTrace();
 	        }
 	        
@@ -78,20 +77,22 @@ public class Main {
 	
 	
 	private static void afficherAide() {
-        System.out.println("Usage: java -jar binaire.jar <method> <pattern> <fichier>");
+		System.out.println("1)-Si vous utilisez le MakeFile essayez : make run ARG1=<method> "
+				+ "ARG2=<pattern> ARG3=<path fichier>");
+		System.out.println("Exemples:");
+		System.out.println("make run ARG1=\"automate\"  ARG2=\"Sargon\" ARG3=\"Samples/56667-0.txt");
+	    System.out.println();      
+        System.out.println("2)-Si vous utiliser le fichier binaire essayez : java -jar binaire.jar <method> <pattern> <fichier>");
+        System.out.println("Exemples:");
+        System.out.println("  java -jar binaire.jar automate \"hello\" Samples/56667-0.txt");
         System.out.println();
-        System.out.println("Méthodes disponibles:");
+        System.out.println("3)-Méthodes disponibles:");
         System.out.println("  automate  - Utilise l'automate fini");
         System.out.println("  kmp       - Utilise l'algorithme KMP");
         System.out.println("  egrep     - Utilise egrep (WSL)");
         System.out.println("  compare   - Compare les 3 méthodes");
         System.out.println();
-        System.out.println("Exemples:");
-        System.out.println("  java -jar binaire.jar automate \"hello\" Samples/56667-0.txt");
-        System.out.println("  java -jar binaire.jar kmp \"world\" Samples/56667-0.txt");
-        System.out.println("  java -jar binaire.jar compare \"test\" Samples/56667-0.txt");
-        System.out.println();
-        System.out.println("Patterns complexes supportés: *, +, |, (), .");
+        System.out.println("4)-Patterns complexes supportés: *, +, |, (), .");
     }
 	
 }

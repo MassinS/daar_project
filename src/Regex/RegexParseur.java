@@ -442,30 +442,9 @@ Les opérateurs, par ordre de priorité (du plus prioritaire au moins) :
 4) | (alternative)
 
 Exemple : a(b|c)* signifie : a concaténé avec (b|c)*.
-
 	  
 	  */
 
-	
-	
-	
-	
-	/* L'arbre final de "a(b|c)*" */
-
-/*
-
-   CONCAT(
-  Char('a')        // root = 97
-  ETOILE(          // root = 0xE7011E
-    ALTERN(        // root = 0xA17E54
-      Char('b')    // root = 98
-      Char('c')    // root = 99
-          )
-       )
-    )      
-  
-  
-*/
 
 
 

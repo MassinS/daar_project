@@ -1,10 +1,11 @@
-# Projet Egrep clone - Recherche de Motifs
+# Clone de egrep avec support partiel des ERE.
 - Ce projet est un clone simplifié de la commande egrep, permettant la recherche de motifs (expressions régulières) avec différentes méthodes (automate, KMP, comparateur...).
 
 ## Installation et exécution
 
 ### Prérequis :
 - Java 8 ou supérieur.
+- Javac.
 - JUnit pour les tests unitaires.
 - WSL (pour la méthode egrep sur Windows).
 
@@ -15,7 +16,7 @@ Make run ARG1=<Method> ARG2=<Pattern> ARG3=<Path_file>
 ```
 ### Exemple d'utilisation :
 ```bash
-make run ARG1="compare" ARG2="Sargon" ARG3="Samples/56667-0.txt"
+make run ARG1="automate" ARG2="Sargon" ARG3="Samples/56667-0.txt"
 ```
 
 ### Exécution directe du jar : 
@@ -37,12 +38,12 @@ Pour lancer les tests :
 -  il faut exécuter la classe EtudeExperimental/Etude/EtudeNombredeMots.java pour le test de Benchamrk de patterns simple pour comparer le nombre d'occurence pour chaque méthode.
 
 ### Les résulats des tests : 
-les resultats de chaque test se troue dans le dossier Result sous format PNG.
+les resultats de chaque test se trouve dans le dossier Result sous format PNG.
 
 
 ### Remarques importante à considèrer : 
 - 1- Cette méthode affiche toutes les lignes contenant un motif trouvé, ce qui peut augmenter le temps d'exécution sur de gros fichiers.
-- 2- Le projet a été développé sous Windows avec Eclipse. Pour exécuter la commande egrep dans la méthode de comparaison, WSL est utilisé par défaut. Si vous êtes sous Linux, modifiez la ligne 95 du fichier Etude/benchmarkEgrep.java :
+- 2- Le projet a été développé sous Windows avec Eclipse. Pour exécuter la commande egrep, WSL est utilisé par défaut. Si vous êtes sous Linux, modifiez la ligne 95 du fichier Etude/benchmarkEgrep.java :
 -  Remplacer :
 
 ```bash
