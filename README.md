@@ -16,6 +16,12 @@
 - ✅ Compilé avec Java 17 → Exécutable sur Java 17, 19, 22  
 - ❌ Compilé avec Java 22 → NON exécutable sur Java 11, 17, 19
 
+### ⚠ IMPORTANT :
+Le dossier bin et le fichier binaire.jar ont été générés avec JDK 22.
+Donc :
+- Si vous exécutez directement ces fichiers → Java 22 ou supérieur OBLIGATOIRE.
+- Si vous avez une version de Java inférieure (ex : 11, 17, 19) → lancez `make clean && make run`
+  pour recompiler le projet avec VOTRE version de Java.
 
 ### Exécution rapide avec MakeFile :
 ```bash
@@ -50,7 +56,7 @@ les resultats de chaque test se trouve dans le dossier Result sous format PNG.
 
 
 ### Remarques importante à considèrer : 
-- 1- Cette méthode affiche toutes les lignes contenant un motif trouvé, ce qui peut augmenter le temps d'exécution sur de gros fichiers.
+- 1- La méthode automate affiche toutes les lignes contenant un motif trouvé, ce qui peut augmenter le temps d'exécution sur de gros fichiers.
 - 2- Le projet a été développé sous Windows avec Eclipse. Pour exécuter la commande egrep, WSL est utilisé par défaut. Si vous êtes sous Linux, modifiez la ligne 95 du fichier Etude/benchmarkEgrep.java :
 -  Remplacer :
 
